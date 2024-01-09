@@ -15,14 +15,14 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 
-public class Transport implements Comparable<Transport>{
+public class Transport implements Comparable<Transport> {
    public static enum stanyTransportu {
       IMPORT,
       EKSPORT
    }
 
    public static String stanyNaString(stanyTransportu sT) {
-      if(sT == stanyTransportu.EKSPORT)
+      if (sT == stanyTransportu.EKSPORT)
          return "Przywóz do magazynu";
       return "Wywóz z magazynu";
    }
@@ -33,10 +33,11 @@ public class Transport implements Comparable<Transport>{
 
       ZonedDateTime zonedDateTime = ZonedDateTime.of(data, czas, ZoneId.of("Europe/Helsinki"));
       String dataICzas = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(zonedDateTime);
-      
+
       return dataICzas;
    }
-   public static LocalDateTime stringNaDataTrans(int rok, int miesiac,  int dzien, int godzina, int minuta) {
+
+   public static LocalDateTime stringNaDataTrans(int rok, int miesiac, int dzien, int godzina, int minuta) {
 
       LocalDateTime ldt = LocalDateTime.of(rok, miesiac, dzien, godzina, minuta, 0);
 
@@ -48,14 +49,15 @@ public class Transport implements Comparable<Transport>{
       listaTransportow.add(this);
    }
 
-   public Transport(int rok, int miesiac,  int dzien, int godzina, int minuta) {
+   public Transport(int rok, int miesiac, int dzien, int godzina, int minuta) {
       this.ID = -1;
       this.nazwaTowaru = "konstrukor_testDaty";
       this.dataTransportu = LocalDateTime.of(rok, miesiac, dzien, godzina, minuta, 0);
       listaTransportow.add(this);
    }
 
-   public Transport(int ID, String nazwaTowaru, int rok, int miesiac,  int dzien, int godzina, int minuta, stanyTransportu import_eksport) {
+   public Transport(int ID, String nazwaTowaru, int rok, int miesiac, int dzien, int godzina, int minuta,
+         stanyTransportu import_eksport) {
       this.ID = ID;
       this.nazwaTowaru = nazwaTowaru;
       this.dataTransportu = LocalDateTime.of(rok, miesiac, dzien, godzina, minuta, 0);
@@ -66,7 +68,7 @@ public class Transport implements Comparable<Transport>{
 
    int ID = 0;
    String nazwaTowaru = "Brak nazwy";
-   LocalDateTime dataTransportu = LocalDateTime.now().plus(1,ChronoUnit.YEARS);
+   LocalDateTime dataTransportu = LocalDateTime.now().plus(1, ChronoUnit.YEARS);
    stanyTransportu import_eksport = stanyTransportu.IMPORT;
 
    static List<Transport> listaTransportow = new ArrayList<>();
@@ -81,8 +83,10 @@ public class Transport implements Comparable<Transport>{
    static Comparator<Transport> porownajID = new Comparator<Transport>() {
       @Override
       public int compare(Transport t1, Transport t2) {
-         if (t1.ID > t2.ID) return 1;
-         if (t1.ID < t2.ID) return -1;
+         if (t1.ID > t2.ID)
+            return 1;
+         if (t1.ID < t2.ID)
+            return -1;
          return 0;
       }
    };
@@ -95,37 +99,37 @@ public class Transport implements Comparable<Transport>{
 
    // testy
    public static void main(String[] args) {
-      /*
-      Transport tr = new Transport(1,2,3,4,5);
 
-      //System.out.println(tr.dataTransportu.toLocalTime().toString());
-      //return;
-      //System.out.println(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).format(
-      //   ZonedDateTime.of(tr.dataTransportu.toLocalDate(), tr.dataTransportu.toLocalTime(), ZoneId.of("Europe/Budapest"))
-      //   ));
+      Transport tr = new Transport(1, 2, 3, 4, 5);
 
-      
-      //LocalDate anotherSummerDay = LocalDate.of(2016, 8, 23);
-      //LocalTime anotherTime = LocalTime.of(13, 12, 45);
-      //ZonedDateTime zonedDateTime = ZonedDateTime.of(anotherSummerDay, anotherTime, ZoneId.of("Europe/Helsinki"));
+      // System.out.println(tr.dataTransportu.toLocalTime().toString());
+      // return;
+      // System.out.println(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).format(
+      // ZonedDateTime.of(tr.dataTransportu.toLocalDate(),
+      // tr.dataTransportu.toLocalTime(), ZoneId.of("Europe/Budapest"))
+      // ));
+
+      // LocalDate anotherSummerDay = LocalDate.of(2016, 8, 23);
+      // LocalTime anotherTime = LocalTime.of(13, 12, 45);
+      // ZonedDateTime zonedDateTime = ZonedDateTime.of(anotherSummerDay, anotherTime,
+      // ZoneId.of("Europe/Helsinki"));
 
       LocalDate anotherSummerDay = tr.dataTransportu.toLocalDate();
       LocalTime anotherTime = tr.dataTransportu.toLocalTime();
       ZonedDateTime zonedDateTime = ZonedDateTime.of(anotherSummerDay, anotherTime, ZoneId.of("Europe/Helsinki"));
 
-      
       System.out.println(
-      DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)
-      .format(zonedDateTime));
+            DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)
+                  .format(zonedDateTime));
       System.out.println(
-      DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG)
-      .format(zonedDateTime));
+            DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG)
+                  .format(zonedDateTime));
       System.out.println(
-      DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-      .format(zonedDateTime));
+            DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                  .format(zonedDateTime));
       System.out.println(
-      DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-      .format(zonedDateTime)); 
-      */
+            DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+                  .format(zonedDateTime));
+      /**/
    }
 }

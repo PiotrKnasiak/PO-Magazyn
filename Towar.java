@@ -69,6 +69,12 @@ public class Towar implements Comparable<Towar> {
             return kolator.compare(t1.typ, t2.typ);
         }
     };
+    static Comparator<Towar> porownajWlasc = new Comparator<Towar>() {
+        @Override
+        public int compare(Towar t1, Towar t2) {
+            return kolator.compare(t1.wlasciciel, t2.wlasciciel);
+        }
+    };
     static Comparator<Towar> porownajWag = new Comparator<Towar>() {
         @Override
         public int compare(Towar t1, Towar t2) {
@@ -88,6 +94,8 @@ public class Towar implements Comparable<Towar> {
                 return -1;
             if (rozn > 0)
                 return 1;
+
+            System.out.println("\n\n*** Error!\n\tDuplikat ID w towarach!\n\n");
             return porownajNaz.compare(t1, t2);
         }
     };

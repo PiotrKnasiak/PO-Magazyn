@@ -65,13 +65,16 @@ public class MyPanel extends JPanel {
     // elementy fr_main - pracownicy
 
     // elementy fr_main - towary
+    public static JButton btn_sortujID;
+    public static JButton btn_sortujWaga;
+    public static JButton btn_sortujWlasc;
 
     // elementy fr_main - transpotr
 
     // elementy fr_main - logowanie
 
-    int niePentla = 0;
-
+    static int licznik = 0;
+    private static String sortTow = "ID"; // ID, Wlasc, Waga
     private static boolean zalogowany = false;
 
     public static int zaloguj() {
@@ -166,6 +169,7 @@ public class MyPanel extends JPanel {
             Pracownik.listaPracownikow.sort(Pracownik.porownajID);
 
             String dane[][] = objektyNaListyStr(Pracownik.listaPracownikow.toArray(), typ);
+
             tbl_tabelaMain = new JTable(dane, kolumny);
             tbl_tabelaMain.setBounds(20, 100, 760, 390);
 
@@ -180,10 +184,21 @@ public class MyPanel extends JPanel {
             new Towar();
             // TU !!! wczytaj
 
-            Towar.listaTowarow.sort(Towar.porownajID);
-            for (Towar tow : Towar.listaTowarow) {
-                System.out.println(tow.ID);
+            switch (sortTow) {
+                case "Wlasc":
+                    Towar.listaTowarow.sort(Towar.porownajWlasc);
+                    break;
+
+                case "Waga":
+                    Towar.listaTowarow.sort(Towar.porownajWag);
+                    break;
+
+                default:
+                    Towar.listaTowarow.sort(Towar.porownajID);
+                    break;
+
             }
+            Towar.listaTowarow.sort(Towar.porownajID);
 
             String dane[][] = objektyNaListyStr(Towar.listaTowarow.toArray(), typ);
 
