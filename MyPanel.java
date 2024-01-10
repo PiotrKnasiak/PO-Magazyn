@@ -55,8 +55,8 @@ public class MyPanel extends JPanel {
     public static JButton btn_usun;
 
     public static final int SUKCES = 0;
-    public static final int PORAZKA = -2;
     public static final int BLAD = -1;
+    public static final int PORAZKA = -2;
 
     public static Pracownik[] pracownicy;
     public static Towar[] towary;

@@ -22,7 +22,21 @@ public class DaneLogowania implements Comparable<DaneLogowania> {
    String login = "test";
    String haslo = "Test";
 
-   public static ArrayList<DaneLogowania> listaDanychLog = new ArrayList<>();
+   private static ArrayList<DaneLogowania> listaDanychLog = new ArrayList<>();
+
+   public static int sprawdzLogwanie(String login, String haslo) {
+      for (int i = 0; i < listaDanychLog.size(); i++) {
+         if (listaDanychLog.get(i).login == login) {
+            if (listaDanychLog.get(i).haslo == haslo) {
+               return MyPanel.SUKCES;
+            }
+
+            return MyPanel.BLAD;
+         }
+      }
+
+      return MyPanel.PORAZKA;
+   }
 
    public static Comparator<DaneLogowania> porownajID = new Comparator<DaneLogowania>() {
       @Override
