@@ -72,6 +72,18 @@ public class MyPanel extends JPanel {
     // elementy fr_main - transpotr
 
     // elementy fr_main - logowanie
+    private JLabel lbl_logRej;
+    private JButton btn_loginZatw;
+    private JButton btn_rejCof;
+    private JLabel lbl_login;
+    private JLabel lbl_haslo;
+    private JTextField txt_haslo;
+    private JTextField txt_kodAdmin;
+    private JLabel lbl_kodAdmin;
+    public JTextField txt_login;
+
+    private Font czcionka = new Font("Dialog", Font.PLAIN, 18);
+    private Font czcionkaB = new Font("Dialog", Font.BOLD, 14);
 
     static int licznik = 0;
     private static String sortTow = "ID"; // ID, Wlasc, Waga
@@ -86,7 +98,7 @@ public class MyPanel extends JPanel {
         zalogowany = false;
     }
 
-    public static String[][] objektyNaListyStr(Object[] objekt, tabele typ) {
+    public static String[][] obiektyNaListyStr(Object[] obiekty, tabele typ) {
         // {"ID", "Nazwisko", "Imie", "Zmiana", "Pozycja", "Wypłata"};
         // {"ID", "Nazwa", "Typ produktu", "Waga [kg]", "Właściciel"};
         // {"ID towaru", "Nazwa towaru", "Data", "Operacja"};
@@ -95,11 +107,11 @@ public class MyPanel extends JPanel {
 
         switch (typ) {
             case PRACOWNICY:
-                stringi = new String[objekt.length][6];
-                pracownicy = new Pracownik[objekt.length];
+                stringi = new String[obiekty.length][6];
+                pracownicy = new Pracownik[obiekty.length];
 
-                for (int i = 0; i < objekt.length; i++) {
-                    pracownicy[i] = (Pracownik) objekt[i];
+                for (int i = 0; i < obiekty.length; i++) {
+                    pracownicy[i] = (Pracownik) obiekty[i];
                 }
 
                 for (int i = 0; i < pracownicy.length; i++) {
@@ -113,11 +125,11 @@ public class MyPanel extends JPanel {
                 break;
 
             case TOWARY:
-                stringi = new String[objekt.length][5];
-                towary = new Towar[objekt.length];
+                stringi = new String[obiekty.length][5];
+                towary = new Towar[obiekty.length];
 
-                for (int i = 0; i < objekt.length; i++) {
-                    towary[i] = (Towar) objekt[i];
+                for (int i = 0; i < obiekty.length; i++) {
+                    towary[i] = (Towar) obiekty[i];
                 }
 
                 for (int i = 0; i < towary.length; i++) {
@@ -130,11 +142,11 @@ public class MyPanel extends JPanel {
                 break;
 
             case TRANSPORT:
-                stringi = new String[objekt.length][4];
-                transporty = new Transport[objekt.length];
+                stringi = new String[obiekty.length][4];
+                transporty = new Transport[obiekty.length];
 
-                for (int i = 0; i < objekt.length; i++) {
-                    transporty[i] = (Transport) objekt[i];
+                for (int i = 0; i < obiekty.length; i++) {
+                    transporty[i] = (Transport) obiekty[i];
                 }
 
                 for (int i = 0; i < transporty.length; i++) {
@@ -153,6 +165,74 @@ public class MyPanel extends JPanel {
         return stringi;
     }
 
+    public static Object[] listyStrNaObiekty(String[][] str, tabele typ) {
+        // {"ID", "Nazwisko", "Imie", "Zmiana", "Pozycja", "Wypłata"};
+        // {"ID", "Nazwa", "Typ produktu", "Waga [kg]", "Właściciel"};
+        // {"ID towaru", "Nazwa towaru", "Data", "Operacja"};
+
+        Object[] obiekty = new Object[str.length]; // ok
+
+        /*
+         * switch (typ) {
+         * case PRACOWNICY:
+         * stringi = new String[obiekt.length][6];
+         * pracownicy = new Pracownik[obiekt.length];
+         * 
+         * for (int i = 0; i < obiekt.length; i++) {
+         * pracownicy[i] = (Pracownik) obiekt[i];
+         * }
+         * 
+         * for (int i = 0; i < pracownicy.length; i++) {
+         * stringi[i][0] = String.valueOf(pracownicy[i].ID);
+         * stringi[i][1] = pracownicy[i].nazwisko;
+         * stringi[i][2] = pracownicy[i].imie;
+         * stringi[i][3] = pracownicy[i].zmiana;
+         * stringi[i][4] = pracownicy[i].pozycja;
+         * stringi[i][5] = pracownicy[i].wypłata;
+         * }
+         * break;
+         * 
+         * case TOWARY:
+         * stringi = new String[obiekt.length][5];
+         * towary = new Towar[obiekt.length];
+         * 
+         * for (int i = 0; i < obiekt.length; i++) {
+         * towary[i] = (Towar) obiekt[i];
+         * }
+         * 
+         * for (int i = 0; i < towary.length; i++) {
+         * stringi[i][0] = String.valueOf(towary[i].ID);
+         * stringi[i][1] = towary[i].nazwa;
+         * stringi[i][2] = towary[i].typ;
+         * stringi[i][3] = String.valueOf(towary[i].wagaKG);
+         * stringi[i][4] = towary[i].wlasciciel;
+         * }
+         * break;
+         * 
+         * case TRANSPORT:
+         * stringi = new String[obiekt.length][4];
+         * transporty = new Transport[obiekt.length];
+         * 
+         * for (int i = 0; i < obiekt.length; i++) {
+         * transporty[i] = (Transport) obiekt[i];
+         * }
+         * 
+         * for (int i = 0; i < transporty.length; i++) {
+         * stringi[i][0] = String.valueOf(transporty[i].ID);
+         * stringi[i][1] = transporty[i].nazwaTowaru;
+         * stringi[i][2] = Transport.dataTransNaString(transporty[i].dataTransportu);
+         * stringi[i][3] = Transport.stanyNaString(transporty[i].import_eksport);
+         * }
+         * break;
+         * 
+         * default:
+         * break;
+         * 
+         * }
+         */
+        return obiekty;
+    }
+
     public static boolean stworzTabele(tabele typ) {
 
         if (typ == tabele.PRACOWNICY) {
@@ -168,7 +248,7 @@ public class MyPanel extends JPanel {
 
             Pracownik.listaPracownikow.sort(Pracownik.porownajID);
 
-            String dane[][] = objektyNaListyStr(Pracownik.listaPracownikow.toArray(), typ);
+            String dane[][] = obiektyNaListyStr(Pracownik.listaPracownikow.toArray(), typ);
 
             tbl_tabelaMain = new JTable(dane, kolumny);
             tbl_tabelaMain.setBounds(20, 100, 760, 390);
@@ -200,7 +280,7 @@ public class MyPanel extends JPanel {
             }
             Towar.listaTowarow.sort(Towar.porownajID);
 
-            String dane[][] = objektyNaListyStr(Towar.listaTowarow.toArray(), typ);
+            String dane[][] = obiektyNaListyStr(Towar.listaTowarow.toArray(), typ);
 
             tbl_tabelaMain = new JTable(dane, kolumny);
             tbl_tabelaMain.setBounds(20, 100, 760, 390);
@@ -218,7 +298,7 @@ public class MyPanel extends JPanel {
 
             Transport.listaTransportow.sort(Transport.porownajID);
 
-            String dane[][] = objektyNaListyStr(Transport.listaTransportow.toArray(), typ);
+            String dane[][] = obiektyNaListyStr(Transport.listaTransportow.toArray(), typ);
 
             tbl_tabelaMain = new JTable(dane, kolumny);
             tbl_tabelaMain.setBounds(20, 100, 760, 390);
@@ -250,42 +330,60 @@ public class MyPanel extends JPanel {
         System.out.println("\nTworzenie nowego okienka");
         boolean sukcesTabeli = true;
 
-        btn_prac = new JButton("Pracownicy");
-        btn_towary = new JButton("Lista Towarów");
-        btn_trans = new JButton("Transfery");
-        btn_log = new JButton("Logowanie");
+        if (panel == panele.PRACOWNICY || panel == panele.TOWARY || panel == panele.TRANSPORT
+                || panel == panele.LOGOWANIE) {
 
-        System.out.println("Tworzenie głównego listenera");
-        // ogólny actionLietener dla fr_main
-        ActionListener listenMain = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (event.getSource() == btn_prac) {
-                    System.out.println("Działa...");
-                    fr_main.getContentPane().removeAll();
-                    fr_main.getContentPane().add(new MyPanel(panele.PRACOWNICY));
-                    fr_main.revalidate();
+            btn_prac = new JButton("Pracownicy");
+            btn_towary = new JButton("Lista Towarów");
+            btn_trans = new JButton("Transfery");
+            btn_log = new JButton("Logowanie");
+
+            System.out.println("Tworzenie głównego listenera");
+            // ogólny actionLietener dla fr_main
+            ActionListener listenMain = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    if (event.getSource() == btn_prac) {
+                        System.out.println("Działa...");
+                        fr_main.getContentPane().removeAll();
+                        fr_main.getContentPane().add(new MyPanel(panele.PRACOWNICY));
+                        fr_main.revalidate();
+                    }
+                    if (event.getSource() == btn_towary) {
+                        System.out.println("Działa...");
+                        fr_main.getContentPane().removeAll();
+                        fr_main.getContentPane().add(new MyPanel(panele.TOWARY));
+                        fr_main.revalidate();
+                    }
+                    if (event.getSource() == btn_trans) {
+                        System.out.println("Działa...");
+                        fr_main.getContentPane().removeAll();
+                        fr_main.getContentPane().add(new MyPanel(panele.TRANSPORT));
+                        fr_main.revalidate();
+                    }
+                    if (event.getSource() == btn_log) {
+                        System.out.println("Działa...");
+                        fr_main.getContentPane().removeAll();
+                        fr_main.getContentPane().add(new MyPanel(panele.LOGOWANIE));
+                        fr_main.revalidate();
+                    }
                 }
-                if (event.getSource() == btn_towary) {
-                    System.out.println("Działa...");
-                    fr_main.getContentPane().removeAll();
-                    fr_main.getContentPane().add(new MyPanel(panele.TOWARY));
-                    fr_main.revalidate();
-                }
-                if (event.getSource() == btn_trans) {
-                    System.out.println("Działa...");
-                    fr_main.getContentPane().removeAll();
-                    fr_main.getContentPane().add(new MyPanel(panele.PRACOWNICY));
-                    fr_main.revalidate();
-                }
-                if (event.getSource() == btn_log) {
-                    System.out.println("Działa...");
-                    fr_main.getContentPane().removeAll();
-                    fr_main.getContentPane().add(new MyPanel(panele.TOWARY));
-                    fr_main.revalidate();
-                }
-            }
-        };
+            };
+            add(btn_prac);
+            add(btn_towary);
+            add(btn_trans);
+            add(btn_log);
+
+            btn_prac.setBounds(20, 17, 125, 30);
+            btn_towary.setBounds(160, 17, 125, 30);
+            btn_trans.setBounds(300, 17, 125, 30);
+            btn_log.setBounds(440, 17, 125, 30);
+
+            btn_prac.addActionListener(listenMain);
+            btn_towary.addActionListener(listenMain);
+            btn_trans.addActionListener(listenMain);
+            btn_log.addActionListener(listenMain);
+        }
 
         switch (panel) {
             case PRACOWNICY:
@@ -303,10 +401,6 @@ public class MyPanel extends JPanel {
                 setLayout(null);
 
                 // dodanie komponentow
-                add(btn_prac);
-                add(btn_towary);
-                add(btn_trans);
-                add(btn_log);
                 add(lbl_nazwaTabeli);
                 // tabela dodana poniżej
                 add(btn_dodaj);
@@ -314,13 +408,9 @@ public class MyPanel extends JPanel {
                 add(btn_usun);
 
                 // Aboslutna pozycja i rozmiary
-                btn_prac.setBounds(20, 15, 125, 30);
-                btn_towary.setBounds(160, 15, 125, 30);
-                btn_trans.setBounds(300, 15, 125, 30);
-                btn_log.setBounds(440, 15, 125, 30);
                 lbl_nazwaTabeli.setBounds(20, 65, 135, 30);
                 btn_dodaj.setBounds(55, 520, 190, 30);
-                btn_usun.setBounds(530, 520, 190, 30);
+                btn_usun.setBounds(555, 520, 190, 30);
                 btn_zapisz.setBounds(305, 520, 190, 30);
 
                 // ładowanie i wstępne przypisane danych (test/temp)
@@ -336,6 +426,7 @@ public class MyPanel extends JPanel {
 
                 // Action Listener
                 ActionListener listenMainPrac = new ActionListener() {
+
                     @Override
                     public void actionPerformed(ActionEvent event) {
                         if (event.getSource() == btn_log) {
@@ -360,10 +451,6 @@ public class MyPanel extends JPanel {
                 setLayout(null);
 
                 // dodanie komponentow
-                add(btn_prac);
-                add(btn_towary);
-                add(btn_trans);
-                add(btn_log);
                 add(lbl_nazwaTabeli);
                 // tabela dodana poniżej
                 add(btn_dodaj);
@@ -371,13 +458,10 @@ public class MyPanel extends JPanel {
                 add(btn_usun);
 
                 // Aboslutna pozycja i rozmiary
-                btn_prac.setBounds(20, 15, 125, 30);
-                btn_towary.setBounds(160, 15, 125, 30);
-                btn_trans.setBounds(300, 15, 125, 30);
-                btn_log.setBounds(440, 15, 125, 30);
+
                 lbl_nazwaTabeli.setBounds(20, 65, 135, 30);
                 btn_dodaj.setBounds(55, 520, 190, 30);
-                btn_usun.setBounds(530, 520, 190, 30);
+                btn_usun.setBounds(555, 520, 190, 30);
                 btn_zapisz.setBounds(305, 520, 190, 30);
 
                 // ładowanie i wstępne przypisane danych (test/temp)
@@ -404,12 +488,49 @@ public class MyPanel extends JPanel {
 
             case TRANSPORT:
                 System.out.println("Tworzenie okeinka TRANSPORT");
+
+                // przypisywanie komponentów
+                tbl_tabelaMain = new JTable();
+                lbl_nazwaTabeli = new JLabel("Lista przywozów i wywozów");
+                btn_dodaj = new JButton("Dodaj przywóz");
+                btn_usun = new JButton("Dodaj wywóz");
+                btn_zapisz = new JButton("Zapisz zmiany");
+
+                // wymiary okna i layout
                 setPreferredSize(new Dimension(800, 600));
+                setLayout(null);
+
+                // dodanie komponentow
+                add(lbl_nazwaTabeli);
+                // tabela dodana poniżej
+                add(btn_dodaj);
+                add(btn_zapisz);
+                add(btn_usun);
+
+                // Aboslutna pozycja i rozmiary
+
+                lbl_nazwaTabeli.setBounds(20, 65, 135, 30);
+                btn_dodaj.setBounds(55, 520, 190, 30);
+                btn_usun.setBounds(555, 520, 190, 30);
+                btn_zapisz.setBounds(305, 520, 190, 30);
+
+                // ładowanie i wstępne przypisane danych (test/temp)
+                sukcesTabeli = stworzTabele(tabele.TRANSPORT);
+                if (!sukcesTabeli)
+                    System.out.println("Niepowodzenie w 'stworzTabele(tabele.TRANSPORT)'");
+
+                scr_tabeli = new JScrollPane(tbl_tabelaMain);
+                tbl_tabelaMain.setFillsViewportHeight(true);
+
+                add(scr_tabeli);
+                scr_tabeli.setBounds(20, 100, 760, 390);
+
+                // Action Listener
 
                 ActionListener listenMainTrans = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_prac) {
+                        if (event.getSource() == btn_dodaj) {
                         }
                     }
                 };
@@ -417,14 +538,58 @@ public class MyPanel extends JPanel {
                 break;
 
             case LOGOWANIE:
+
                 System.out.println("Tworzenie okeinka LOGOWANIE");
+
                 setPreferredSize(new Dimension(800, 600));
+
+                // construct components
+                lbl_logRej = new JLabel("Logowanie/Rejestracja");
+                btn_loginZatw = new JButton("Zaloguj/Zatwierdz");
+                btn_rejCof = new JButton("Rejestracja/Cofnij");
+                lbl_login = new JLabel("Login");
+                lbl_haslo = new JLabel("Hasło");
+                txt_haslo = new JTextField(40);
+                txt_kodAdmin = new JTextField(20);
+                lbl_kodAdmin = new JLabel("Podaj kod administratora");
+                txt_login = new JTextField(40);
+
+                // adjust size and set layout
+                setPreferredSize(new Dimension(800, 600));
+                setLayout(null);
+
+                // add components
+                add(lbl_logRej);
+                add(btn_loginZatw);
+                add(btn_rejCof);
+                add(lbl_login);
+                add(lbl_haslo);
+                add(txt_haslo);
+                add(txt_kodAdmin);
+                add(lbl_kodAdmin);
+                add(txt_login);
+
+                // set component bounds (only needed by Absolute Positioning)
+                lbl_logRej.setBounds(330, 130, 140, 30);
+                lbl_login.setBounds(180, 190, 100, 25);
+                txt_login.setBounds(175, 220, 450, 45);
+                lbl_haslo.setBounds(180, 305, 100, 25);
+                txt_haslo.setBounds(175, 335, 450, 45);
+                btn_loginZatw.setBounds(315, 420, 170, 35);
+                btn_rejCof.setBounds(315, 485, 170, 35);
+
+                lbl_kodAdmin.setBounds(330, 250, 145, 30);
+                txt_kodAdmin.setBounds(305, 290, 190, 45);
+
+                txt_login.setFont(czcionka);
+                txt_haslo.setFont(czcionka);
+                txt_kodAdmin.setFont(czcionka);
 
                 ActionListener listenMainLog = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_prac) {
-                        }
+                        // if (event.getSource() == btn_dodaj) {
+                        // }
                     }
                 };
 
@@ -437,8 +602,8 @@ public class MyPanel extends JPanel {
                 ActionListener listenSubDodajPrac = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_prac) {
-                        }
+                        // if (event.getSource() == btn_dodaj) {
+                        // }
                     }
                 };
 
@@ -451,8 +616,8 @@ public class MyPanel extends JPanel {
                 ActionListener listenSubUsunPrac = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_prac) {
-                        }
+                        // if (event.getSource() == btn_dodaj) {
+                        // }
                     }
                 };
 
@@ -465,8 +630,8 @@ public class MyPanel extends JPanel {
                 ActionListener listenSubDodajTow = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_prac) {
-                        }
+                        // if (event.getSource() == btn_prac) {
+                        // }
                     }
                 };
 
@@ -479,8 +644,8 @@ public class MyPanel extends JPanel {
                 ActionListener listenSubWyslijTow = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_prac) {
-                        }
+                        // if (event.getSource() == btn_prac) {
+                        // }
                     }
                 };
 
@@ -492,14 +657,15 @@ public class MyPanel extends JPanel {
         }
 
         System.out.println("Kaniec");
-        btn_prac.addActionListener(listenMain);
-        btn_towary.addActionListener(listenMain);
     }
 
     public static void main(String[] args) {
+        MyPanel panelLog = new MyPanel(panele.LOGOWANIE);
+        // String[][] sty = new String[5][6];
+
         fr_main = new JFrame("Zarządzanie magazynem");
         fr_main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        fr_main.getContentPane().add(new MyPanel(panele.PRACOWNICY));
+        fr_main.getContentPane().add(panelLog);
         fr_main.pack();
         fr_main.setVisible(true);
         fr_main.addComponentListener(new ComponentAdapter() {
@@ -509,6 +675,9 @@ public class MyPanel extends JPanel {
                 ((JFrame) (e.getComponent())).dispose();
             }
         });
+
+        // System.out.println(sty.length);
+        // System.out.println(panelLog.txt_login.getFont().toString());
 
         /*
          * fr_dodajPrac = new JFrame ("Dodawanie pracownika");
