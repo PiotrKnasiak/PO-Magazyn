@@ -22,9 +22,17 @@ public class Transport implements Comparable<Transport> {
    }
 
    public static String stanyNaString(stanyTransportu sT) {
-      if (sT == stanyTransportu.EKSPORT)
+      if (sT == stanyTransportu.IMPORT)
          return "Przywóz do magazynu";
       return "Wywóz z magazynu";
+   }
+
+   public static stanyTransportu stringNaStany(String str) {
+      str = str.toLowerCase().replace(" ", "").replace("ó", "o");
+
+      if (str == "przywozdomagazynu" || str == "import")
+         return stanyTransportu.IMPORT;
+      return stanyTransportu.EKSPORT;
    }
 
    public static String dataTransNaString(LocalDateTime dt) {
@@ -42,6 +50,58 @@ public class Transport implements Comparable<Transport> {
       LocalDateTime ldt = LocalDateTime.of(rok, miesiac, dzien, godzina, minuta, 0);
 
       return ldt;
+   }
+
+   public static Towar.stanyTowaru zwrocStanTowaru(int ID) {
+      Transport sprawdzany = null;
+      boolean znaleziony = true;
+
+      for (int i = 0; i < Transport.listaTransportow.size(); i++) {
+         if (Transport.listaTransportow.get(i).ID == ID) {
+            sprawdzany = Transport.listaTransportow.get(i);
+            break;
+         }
+      }
+
+      if (Towar.znajdzPoID(ID) == null) {
+         znaleziony = false;
+      }
+
+      if (sprawdzany == null || !znaleziony) {
+         System.out.println("\n*** Error!\n\tNiepowodzenie w zwrocStanTowaru(" + ID + ")!");
+         if (!znaleziony) {
+            System.out.println("\t\tNie ma takiego towaru");
+         }
+         if (sprawdzany == null) {
+            System.out.println("\t\tNie ma takiego transportu");
+         }
+         System.out.println();
+         return Towar.stanyTowaru.BLAD;
+      }
+
+      int porownanieCzas = LocalDateTime.now().compareTo(sprawdzany.dataTransportu);
+      // teraz większe od daty -> 1
+      // teraz równe dacie -> 0
+      // teraz mniejsze od daty -> -1
+
+      // data w przeszłości -> 1
+      // data teraz -> 0
+      // data w przyszłośi -> -1
+
+      if (sprawdzany.import_eksport == Transport.stanyTransportu.IMPORT) {
+         if (porownanieCzas >= 0) {
+            return Towar.stanyTowaru.W_MAGAZYNIE;
+         } else {
+            return Towar.stanyTowaru.DO_ODBIORU;
+         }
+      } else {
+         if (porownanieCzas <= 0) {
+            return Towar.stanyTowaru.WYWIEZIONY;
+         } else {
+            return Towar.stanyTowaru.W_MAGAZYNIE;
+         }
+
+      }
    }
 
    public Transport() {
@@ -64,6 +124,16 @@ public class Transport implements Comparable<Transport> {
       this.import_eksport = import_eksport;
 
       listaTransportow.add(this);
+   }
+
+   public Transport(int ID, String nazwaTowaru, int rok, int miesiac, int dzien, int godzina, int minuta, // bez
+                                                                                                          // dodawania
+         stanyTransportu import_eksport, boolean prank) {
+
+      this.ID = ID;
+      this.nazwaTowaru = nazwaTowaru;
+      this.dataTransportu = LocalDateTime.of(rok, miesiac, dzien, godzina, minuta, 0);
+      this.import_eksport = import_eksport;
    }
 
    int ID = 0;

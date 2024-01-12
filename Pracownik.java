@@ -27,6 +27,17 @@ public class Pracownik extends Osoba implements Comparable<Pracownik> {
         listaPracownikow.add(this);
     }
 
+    Pracownik(int ID, String zmiana, String imie, String nazwisko, String pozycja, String wypłata, boolean prank) { // bez
+                                                                                                                    // dodania
+        this.ID = ID;
+        this.zmiana = zmiana;
+        this.imie = imie;
+        this.nazwisko = nazwisko;
+        this.pozycja = pozycja;
+        this.wypłata = wypłata + waluta;
+        // dodanie instancji obiektu do statycznej listy
+    }
+
     int ID = 0;
     String zmiana = "Dzienna";
     String pozycja = "niewolnik (praktykant)";

@@ -12,7 +12,24 @@ public class Towar implements Comparable<Towar> {
     public static enum stanyTowaru {
         DO_ODBIORU,
         W_MAGAZYNIE,
-        WYWIEZIONY
+        WYWIEZIONY,
+        BLAD
+    }
+
+    public static Towar znajdzPoID(int ID) {
+        Towar sprawdzany = null;
+
+        for (int i = 0; i < Towar.listaTowarow.size(); i++) {
+            if (Towar.listaTowarow.get(i).ID == ID) {
+                return Towar.listaTowarow.get(i);
+            }
+        }
+
+        if (sprawdzany == null) {
+            System.out.println("\n*** Error!\n\tNiepowodzenie w Towar.znajdzPoID(" + ID + ")!\n");
+        }
+
+        return sprawdzany;
     }
 
     public Towar() {
@@ -39,6 +56,17 @@ public class Towar implements Comparable<Towar> {
         this.stanTowaru = stanTowaru;
 
         listaTowarow.add(this);
+    }
+
+    public Towar(int ID, String nazwa, String typ, int wagaKG, String wlasciciel, stanyTowaru stanTowaru,
+            boolean prank) { // bez dodawania
+        this.ID = ID;
+        this.nazwa = nazwa;
+        this.typ = typ;
+        this.wagaKG = wagaKG;
+        this.wlasciciel = wlasciciel;
+        this.stanTowaru = stanTowaru;
+
     }
 
     int ID = 0;
@@ -95,7 +123,7 @@ public class Towar implements Comparable<Towar> {
             if (rozn > 0)
                 return 1;
 
-            System.out.println("\n\n*** Error!\n\tDuplikat ID w towarach!\n\n");
+            System.out.println("\n*** Error!\n\tDuplikat ID w towarach!\n");
             return porownajNaz.compare(t1, t2);
         }
     };

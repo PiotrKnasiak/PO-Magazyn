@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.TableModel;
 
+import ProjektMagazyn.Transport.stanyTransportu;
+
 @SuppressWarnings("ALL")
 public class MyPanel extends JPanel {
 
@@ -55,7 +57,7 @@ public class MyPanel extends JPanel {
     public static JButton btn_usun;
 
     public static final int SUKCES = 0;
-    public static final int BLAD = -1;
+    public static final int BLAD = -1; // częściowo błędne
     public static final int PORAZKA = -2;
 
     public static Pracownik[] pracownicy;
@@ -170,66 +172,50 @@ public class MyPanel extends JPanel {
         // {"ID", "Nazwa", "Typ produktu", "Waga [kg]", "Właściciel"};
         // {"ID towaru", "Nazwa towaru", "Data", "Operacja"};
 
+        // int ID, String zmiana, String imie, String nazwisko,
+        // String pozycja, String wypłata, boolean prank
+
+        // int ID, String nazwa, String typ, int wagaKG, String wlasciciel,
+        // stanyTowaru stanTowaru,boolean prank
+
+        // int ID, String nazwaTowaru, int rok, int miesiac, int dzien, int godzina,
+        // int minuta, stanyTransportu import_eksport, boolean prank
+
         Object[] obiekty = new Object[str.length]; // ok
 
-        /*
-         * switch (typ) {
-         * case PRACOWNICY:
-         * stringi = new String[obiekt.length][6];
-         * pracownicy = new Pracownik[obiekt.length];
-         * 
-         * for (int i = 0; i < obiekt.length; i++) {
-         * pracownicy[i] = (Pracownik) obiekt[i];
-         * }
-         * 
-         * for (int i = 0; i < pracownicy.length; i++) {
-         * stringi[i][0] = String.valueOf(pracownicy[i].ID);
-         * stringi[i][1] = pracownicy[i].nazwisko;
-         * stringi[i][2] = pracownicy[i].imie;
-         * stringi[i][3] = pracownicy[i].zmiana;
-         * stringi[i][4] = pracownicy[i].pozycja;
-         * stringi[i][5] = pracownicy[i].wypłata;
-         * }
-         * break;
-         * 
-         * case TOWARY:
-         * stringi = new String[obiekt.length][5];
-         * towary = new Towar[obiekt.length];
-         * 
-         * for (int i = 0; i < obiekt.length; i++) {
-         * towary[i] = (Towar) obiekt[i];
-         * }
-         * 
-         * for (int i = 0; i < towary.length; i++) {
-         * stringi[i][0] = String.valueOf(towary[i].ID);
-         * stringi[i][1] = towary[i].nazwa;
-         * stringi[i][2] = towary[i].typ;
-         * stringi[i][3] = String.valueOf(towary[i].wagaKG);
-         * stringi[i][4] = towary[i].wlasciciel;
-         * }
-         * break;
-         * 
-         * case TRANSPORT:
-         * stringi = new String[obiekt.length][4];
-         * transporty = new Transport[obiekt.length];
-         * 
-         * for (int i = 0; i < obiekt.length; i++) {
-         * transporty[i] = (Transport) obiekt[i];
-         * }
-         * 
-         * for (int i = 0; i < transporty.length; i++) {
-         * stringi[i][0] = String.valueOf(transporty[i].ID);
-         * stringi[i][1] = transporty[i].nazwaTowaru;
-         * stringi[i][2] = Transport.dataTransNaString(transporty[i].dataTransportu);
-         * stringi[i][3] = Transport.stanyNaString(transporty[i].import_eksport);
-         * }
-         * break;
-         * 
-         * default:
-         * break;
-         * 
-         * }
-         */
+        switch (typ) {
+            case PRACOWNICY:
+                for (int i = 0; i < obiekty.length; i++) {
+                    Pracownik pracownik = new Pracownik(Integer.valueOf(str[i][0]), str[i][1],
+                            str[i][2], str[i][3], str[i][4], str[i][5], false);
+
+                    obiekty[i] = (Object) pracownik;
+                }
+                break;
+
+            case TOWARY:
+                for (int i = 0; i < obiekty.length; i++) {
+                    // Towar towar = new Towar(Integer.valueOf(str[i][0]), str[i][1],
+                    // str[i][2], str[i][3], Towar.stringNaStany(str[i][4]), false);
+
+                    obiekty[i] = (Object) towar;
+                }
+                break;
+
+            case TRANSPORT:
+                for (int i = 0; i < obiekty.length; i++) {
+                    Transport transport = new Transport(Integer.valueOf(str[i][0]), str[i][1],
+                            str[i][2], str[i][3], false);
+
+                    obiekty[i] = (Object) transport;
+                }
+                break;
+
+            default:
+                break;
+
+        }
+
         return obiekty;
     }
 
@@ -347,28 +333,26 @@ public class MyPanel extends JPanel {
                         System.out.println("Działa...");
                         fr_main.getContentPane().removeAll();
                         fr_main.getContentPane().add(new MyPanel(panele.PRACOWNICY));
-                        fr_main.revalidate();
                     }
                     if (event.getSource() == btn_towary) {
                         System.out.println("Działa...");
                         fr_main.getContentPane().removeAll();
                         fr_main.getContentPane().add(new MyPanel(panele.TOWARY));
-                        fr_main.revalidate();
                     }
                     if (event.getSource() == btn_trans) {
                         System.out.println("Działa...");
                         fr_main.getContentPane().removeAll();
                         fr_main.getContentPane().add(new MyPanel(panele.TRANSPORT));
-                        fr_main.revalidate();
                     }
                     if (event.getSource() == btn_log) {
                         System.out.println("Działa...");
                         fr_main.getContentPane().removeAll();
                         fr_main.getContentPane().add(new MyPanel(panele.LOGOWANIE));
-                        fr_main.revalidate();
                     }
+                    fr_main.revalidate();
                 }
             };
+
             add(btn_prac);
             add(btn_towary);
             add(btn_trans);

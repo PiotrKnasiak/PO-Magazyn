@@ -18,6 +18,12 @@ public class DaneLogowania implements Comparable<DaneLogowania> {
       listaDanychLog.add(this);
    }
 
+   public DaneLogowania(int ID, String login, String haslo, boolean prank) { // bez dodawania
+      this.ID = ID;
+      this.login = login;
+      this.haslo = haslo;
+   }
+
    int ID = 0;
    String login = "test";
    String haslo = "Test";
