@@ -32,8 +32,8 @@ public class DaneLogowania implements Comparable<DaneLogowania> {
 
    public static int sprawdzLogwanie(String login, String haslo) {
       for (int i = 0; i < listaDanychLog.size(); i++) {
-         if (listaDanychLog.get(i).login == login) {
-            if (listaDanychLog.get(i).haslo == haslo) {
+         if (listaDanychLog.get(i).login.compareTo(login) == 0) {
+            if (listaDanychLog.get(i).haslo.compareTo(haslo) == 0) {
                return MyPanel.SUKCES;
             }
 
@@ -42,6 +42,38 @@ public class DaneLogowania implements Comparable<DaneLogowania> {
       }
 
       return MyPanel.PORAZKA;
+   }
+
+   public static int sprawdzLogin(String login) {
+      for (int i = 0; i < listaDanychLog.size(); i++) {
+         if (listaDanychLog.get(i).login.compareTo(login) == 0) {
+            return MyPanel.SUKCES;
+         }
+
+      }
+
+      return MyPanel.PORAZKA;
+   }
+
+   public static int sprawdzHaslo(String haslo) {
+      for (int i = 0; i < listaDanychLog.size(); i++) {
+         if (listaDanychLog.get(i).haslo.compareTo(haslo) == 0) {
+            return MyPanel.SUKCES;
+         }
+      }
+
+      return MyPanel.PORAZKA;
+   }
+
+   public static int ostatnieID() {
+      int rozmiar = listaDanychLog.size();
+
+      if (rozmiar > 0) {
+         listaDanychLog.sort(porownajID);
+         return listaDanychLog.get(rozmiar - 1).ID;
+      }
+
+      return 0;
    }
 
    public static Comparator<DaneLogowania> porownajID = new Comparator<DaneLogowania>() {
@@ -60,5 +92,18 @@ public class DaneLogowania implements Comparable<DaneLogowania> {
    @Override
    public int compareTo(DaneLogowania dl) {
       return kolator.compare(this.ID, dl.ID);
+   }
+
+   public static String testListaDL() {
+      String s = "";
+      for (int i = 0; i < listaDanychLog.size(); i++) {
+         s += listaDanychLog.get(i);
+      }
+      return s;
+   }
+
+   @Override
+   public String toString() {
+      return ("\t Login: " + this.login + "\n\tHasło: " + this.haslo + "\n");
    }
 }

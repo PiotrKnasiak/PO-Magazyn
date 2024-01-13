@@ -37,6 +37,13 @@ public class MyPanel extends JPanel {
         DANE_LOGOWANIA
     }
 
+    public static enum etapyLogowania {
+        LOGOWANIE,
+        KOD,
+        REJESTRACJA,
+        ZALOGOWANO
+    }
+
     // okienka
     public static JFrame fr_main;
     public static JFrame fr_dodajPrac;
@@ -71,7 +78,7 @@ public class MyPanel extends JPanel {
     public static JButton btn_sortujWaga;
     public static JButton btn_sortujWlasc;
 
-    // elementy fr_main - transpotr
+    // elementy fr_main - transport
 
     // elementy fr_main - logowanie
     private JLabel lbl_logRej;
@@ -84,21 +91,16 @@ public class MyPanel extends JPanel {
     private JLabel lbl_kodAdmin;
     public JTextField txt_login;
 
+    private Font czcionkaDefault = new Font("Dialog", Font.PLAIN, 14);
     private Font czcionka = new Font("Dialog", Font.PLAIN, 18);
     private Font czcionkaB = new Font("Dialog", Font.BOLD, 14);
+    private Font czcionkaZielona = new Font("Dialog", Font.PLAIN, 14);
+    private Font czcionkaCzerwona = new Font("Dialog", Font.PLAIN, 14);
 
     static int licznik = 0;
     private static String sortTow = "ID"; // ID, Wlasc, Waga
-    private static boolean zalogowany = false;
-
-    public static int zaloguj() {
-        zalogowany = true;
-        return 0;
-    }
-
-    public static void wyloguj() {
-        zalogowany = false;
-    }
+    private static etapyLogowania etapLog = etapyLogowania.LOGOWANIE;
+    public static final String KOD_ADMIN = "qwe123";
 
     public static String[][] obiektyNaListyStr(Object[] obiekty, tabele typ) {
         // {"ID", "Nazwisko", "Imie", "Zmiana", "Pozycja", "Wypłata"};
@@ -392,7 +394,7 @@ public class MyPanel extends JPanel {
                 add(btn_usun);
 
                 // Aboslutna pozycja i rozmiary
-                lbl_nazwaTabeli.setBounds(20, 65, 135, 30);
+                lbl_nazwaTabeli.setBounds(20, 65, 200, 30);
                 btn_dodaj.setBounds(55, 520, 190, 30);
                 btn_usun.setBounds(555, 520, 190, 30);
                 btn_zapisz.setBounds(305, 520, 190, 30);
@@ -443,7 +445,7 @@ public class MyPanel extends JPanel {
 
                 // Aboslutna pozycja i rozmiary
 
-                lbl_nazwaTabeli.setBounds(20, 65, 135, 30);
+                lbl_nazwaTabeli.setBounds(20, 65, 200, 30);
                 btn_dodaj.setBounds(55, 520, 190, 30);
                 btn_usun.setBounds(555, 520, 190, 30);
                 btn_zapisz.setBounds(305, 520, 190, 30);
@@ -493,7 +495,7 @@ public class MyPanel extends JPanel {
 
                 // Aboslutna pozycja i rozmiary
 
-                lbl_nazwaTabeli.setBounds(20, 65, 135, 30);
+                lbl_nazwaTabeli.setBounds(20, 65, 200, 30);
                 btn_dodaj.setBounds(55, 520, 190, 30);
                 btn_usun.setBounds(555, 520, 190, 30);
                 btn_zapisz.setBounds(305, 520, 190, 30);
@@ -528,9 +530,9 @@ public class MyPanel extends JPanel {
                 setPreferredSize(new Dimension(800, 600));
 
                 // construct components
-                lbl_logRej = new JLabel("Logowanie/Rejestracja");
-                btn_loginZatw = new JButton("Zaloguj/Zatwierdz");
-                btn_rejCof = new JButton("Rejestracja/Cofnij");
+                lbl_logRej = new JLabel("Logowanie/Rejestracja", SwingConstants.CENTER); // Logowanie/Rejestracja
+                btn_loginZatw = new JButton("Zaloguj/Zatwierdz"); // Zaloguj/Zatwierdz
+                btn_rejCof = new JButton("Rejestracja/Cofnij"); // Rejestracja/Cofnij
                 lbl_login = new JLabel("Login");
                 lbl_haslo = new JLabel("Hasło");
                 txt_haslo = new JTextField(40);
@@ -554,11 +556,13 @@ public class MyPanel extends JPanel {
                 add(txt_login);
 
                 // set component bounds (only needed by Absolute Positioning)
-                lbl_logRej.setBounds(330, 130, 140, 30);
-                lbl_login.setBounds(180, 190, 100, 25);
+                lbl_logRej.setBounds(200, 130, 400, 30);
+
+                lbl_login.setBounds(180, 190, 150, 25);
                 txt_login.setBounds(175, 220, 450, 45);
-                lbl_haslo.setBounds(180, 305, 100, 25);
+                lbl_haslo.setBounds(180, 305, 150, 25);
                 txt_haslo.setBounds(175, 335, 450, 45);
+
                 btn_loginZatw.setBounds(315, 420, 170, 35);
                 btn_rejCof.setBounds(315, 485, 170, 35);
 
@@ -568,14 +572,202 @@ public class MyPanel extends JPanel {
                 txt_login.setFont(czcionka);
                 txt_haslo.setFont(czcionka);
                 txt_kodAdmin.setFont(czcionka);
+                lbl_logRej.setFont(czcionkaDefault);
+                lbl_login.setFont(czcionkaB);
+                lbl_haslo.setFont(czcionkaB);
 
                 ActionListener listenMainLog = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        // if (event.getSource() == btn_dodaj) {
-                        // }
+                        switch (etapLog) {
+                            case LOGOWANIE:
+                            case ZALOGOWANO:
+                                if (event.getSource() == btn_loginZatw) {
+                                    System.out.println("Lista użytkowników: \n" + DaneLogowania.testListaDL());
+
+                                    int poprawnie = DaneLogowania.sprawdzLogwanie(txt_login.getText(),
+                                            txt_haslo.getText());
+                                    if (poprawnie == SUKCES) {
+                                        etapLog = etapyLogowania.ZALOGOWANO;
+
+                                        lbl_logRej.setText("Zalogowano!");
+                                        lbl_logRej.setForeground(new Color(0, 184, 0));
+
+                                        txt_login.setText("");
+                                        txt_haslo.setText("");
+                                    } else {
+                                        lbl_logRej.setForeground(new Color(204, 0, 0));
+                                        lbl_logRej.setText("Błędny login lub hasło");
+                                        txt_haslo.setText("");
+                                    }
+                                } else if (event.getSource() == btn_rejCof) {
+                                    etapLog = etapyLogowania.KOD;
+
+                                    lbl_logRej.setText("Podaj kod administratora"); // Logowanie/Rejestracja
+                                    lbl_logRej.setForeground(new Color(0, 0, 0));
+
+                                    lbl_login.setVisible(false);
+                                    txt_login.setVisible(false);
+                                    txt_login.setText("");
+
+                                    lbl_haslo.setVisible(false);
+                                    txt_haslo.setVisible(false);
+                                    txt_haslo.setText("");
+
+                                    txt_kodAdmin.setVisible(true);
+                                    lbl_kodAdmin.setVisible(true);
+
+                                    btn_loginZatw.setText("Zatwierdź"); // Zaloguj/Zatwierdz
+                                    btn_rejCof.setText("Cofnij"); // Rejestracja/Cofnij
+                                }
+                                break;
+                            case KOD:
+                                if (event.getSource() == btn_loginZatw) {
+                                    System.out.println(
+                                            "Kod admina to: " + KOD_ADMIN + ", podano :" + txt_kodAdmin.getText());
+
+                                    if (txt_kodAdmin.getText().compareTo(KOD_ADMIN) == 0) {
+                                        etapLog = etapyLogowania.REJESTRACJA;
+
+                                        lbl_logRej.setText("Rejestracja"); // Logowanie/Rejestracja
+                                        lbl_logRej.setForeground(new Color(0, 0, 0));
+
+                                        lbl_login.setText("Nowy login");
+                                        lbl_login.setVisible(true);
+                                        txt_login.setVisible(true);
+                                        lbl_haslo.setText("Nowe hasło");
+                                        lbl_haslo.setVisible(true);
+                                        txt_haslo.setVisible(true);
+
+                                        txt_kodAdmin.setVisible(false);
+                                        lbl_kodAdmin.setVisible(false);
+                                    } else {
+                                        lbl_logRej.setText("Podano błędny kod"); // Logowanie/Rejestracja
+                                        lbl_logRej.setForeground(new Color(204, 0, 0));
+
+                                    }
+                                } else if (event.getSource() == btn_rejCof) {
+                                    etapLog = etapyLogowania.LOGOWANIE;
+
+                                    lbl_logRej.setText("Logowanie"); // Logowanie/Rejestracja
+                                    lbl_logRej.setForeground(new Color(0, 0, 0));
+
+                                    lbl_login.setText("Login");
+                                    lbl_login.setVisible(true);
+                                    txt_login.setVisible(true);
+                                    txt_login.setText("");
+
+                                    lbl_haslo.setText("Hasło");
+                                    lbl_haslo.setVisible(true);
+                                    txt_haslo.setVisible(true);
+                                    txt_haslo.setText("");
+
+                                    txt_kodAdmin.setVisible(false);
+                                    lbl_kodAdmin.setVisible(false);
+                                    txt_kodAdmin.setText("");
+
+                                    btn_loginZatw.setText("Zaloguj"); // Zaloguj/Zatwierdź
+                                    btn_rejCof.setText("Rejestracja"); // Rejestracja/Cofnij
+
+                                }
+                                break;
+                            case REJESTRACJA:
+                                if (event.getSource() == btn_loginZatw) {
+                                    boolean spacje = (txt_login.getText().contains(" "))
+                                            || (txt_haslo.getText().contains(" "));
+                                    int rej = DaneLogowania.sprawdzLogin(txt_login.getText());
+
+                                    boolean pusto = (txt_login.getText().replace(" ", "").compareTo("") == 0)
+                                            || (txt_haslo.getText().replace(" ", "").compareTo("") == 0);
+
+                                    boolean powodzenie = (rej == PORAZKA) && !spacje && !pusto;
+
+                                    if (powodzenie) {
+                                        etapLog = etapyLogowania.ZALOGOWANO;
+
+                                        new DaneLogowania(DaneLogowania.ostatnieID(), txt_login.getText(),
+                                                txt_haslo.getText());
+
+                                        lbl_logRej.setText("Zalogowano!");
+                                        lbl_logRej.setForeground(new Color(0, 184, 0));
+
+                                        lbl_login.setText("Login");
+                                        lbl_login.setVisible(true);
+                                        txt_login.setVisible(true);
+                                        txt_login.setText("");
+
+                                        lbl_haslo.setText("Hasło");
+                                        lbl_haslo.setVisible(true);
+                                        txt_haslo.setVisible(true);
+                                        txt_haslo.setText("");
+
+                                        txt_kodAdmin.setVisible(false);
+                                        lbl_kodAdmin.setVisible(false);
+
+                                        btn_loginZatw.setText("Zaloguj"); // Zaloguj/Zatwierdź
+                                        btn_rejCof.setText("Rejestracja"); // Rejestracja/Cofnij
+                                    } else if (pusto) {
+                                        lbl_logRej.setForeground(new Color(204, 0, 0));
+                                        lbl_logRej.setText("Login lub hasło jest puste");
+
+                                        if (txt_login.getText().replace(" ", "").compareTo("") == 0) {
+                                            txt_login.setText("");
+                                        }
+                                        if (txt_haslo.getText().replace(" ", "").compareTo("") == 0) {
+                                            txt_haslo.setText("");
+                                        }
+                                    } else if (rej == SUKCES) {
+                                        lbl_logRej.setForeground(new Color(204, 0, 0));
+                                        lbl_logRej.setText("Login już istnieje");
+
+                                        txt_login.setText("");
+                                    } else if (spacje) {
+                                        lbl_logRej.setForeground(new Color(204, 0, 0));
+                                        lbl_logRej.setText("Login lub hasło ma w sobie spacje");
+
+                                    } else {
+                                        lbl_logRej.setForeground(new Color(204, 0, 0));
+                                        lbl_logRej.setText("Błąd loginu lub hasła");
+                                    }
+
+                                } else if (event.getSource() == btn_rejCof) {
+                                    etapLog = etapyLogowania.LOGOWANIE;
+
+                                    lbl_logRej.setText("Logowanie"); // Logowanie/Rejestracja
+                                    lbl_logRej.setForeground(new Color(0, 0, 0));
+
+                                    lbl_login.setText("Login");
+                                    lbl_login.setVisible(true);
+                                    txt_login.setVisible(true);
+                                    txt_login.setText("");
+
+                                    lbl_haslo.setText("Hasło");
+                                    lbl_haslo.setVisible(true);
+                                    txt_haslo.setVisible(true);
+                                    txt_haslo.setText("");
+
+                                    txt_kodAdmin.setVisible(false);
+                                    lbl_kodAdmin.setVisible(false);
+
+                                    btn_loginZatw.setText("Zaloguj"); // Zaloguj/Zatwierdź
+                                    btn_rejCof.setText("Rejestracja"); // Rejestracja/Cofnij
+
+                                }
+                                break;
+                        }
+                        revalidate();
                     }
                 };
+
+                lbl_logRej.setText("Logowanie"); // Logowanie/Rejestracja
+                btn_loginZatw.setText("Zaloguj"); // Zaloguj/Zatwierdz
+                btn_rejCof.setText("Rejestracja"); // Rejestracja/Cofnij
+
+                txt_kodAdmin.setVisible(false);
+                lbl_kodAdmin.setVisible(false);
+
+                btn_loginZatw.addActionListener(listenMainLog);
+                btn_rejCof.addActionListener(listenMainLog);
 
                 break;
 
