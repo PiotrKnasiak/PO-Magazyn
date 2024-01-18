@@ -40,8 +40,7 @@ public class MyPanel extends JPanel {
     public static enum etapyLogowania {
         LOGOWANIE,
         KOD,
-        REJESTRACJA,
-        ZALOGOWANO
+        REJESTRACJA
     }
 
     // okienka
@@ -94,9 +93,8 @@ public class MyPanel extends JPanel {
     private Font czcionkaDefault = new Font("Dialog", Font.PLAIN, 14);
     private Font czcionka = new Font("Dialog", Font.PLAIN, 18);
     private Font czcionkaB = new Font("Dialog", Font.BOLD, 14);
-    private Font czcionkaZielona = new Font("Dialog", Font.PLAIN, 14);
-    private Font czcionkaCzerwona = new Font("Dialog", Font.PLAIN, 14);
 
+    private static boolean zalogowany = false;
     static int licznik = 0;
     private static String sortTow = "ID"; // ID, Wlasc, Waga
     private static etapyLogowania etapLog = etapyLogowania.LOGOWANIE;
@@ -576,26 +574,30 @@ public class MyPanel extends JPanel {
                 lbl_login.setFont(czcionkaB);
                 lbl_haslo.setFont(czcionkaB);
 
+                new DaneLogowania(3, "t", "t");
+
                 ActionListener listenMainLog = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
                         switch (etapLog) {
                             case LOGOWANIE:
-                            case ZALOGOWANO:
                                 if (event.getSource() == btn_loginZatw) {
                                     System.out.println("Lista użytkowników: \n" + DaneLogowania.testListaDL());
 
                                     int poprawnie = DaneLogowania.sprawdzLogwanie(txt_login.getText(),
                                             txt_haslo.getText());
                                     if (poprawnie == SUKCES) {
-                                        etapLog = etapyLogowania.ZALOGOWANO;
+                                        etapLog = etapyLogowania.LOGOWANIE;
 
+                                        zalogowany = true;
                                         lbl_logRej.setText("Zalogowano!");
                                         lbl_logRej.setForeground(new Color(0, 184, 0));
 
                                         txt_login.setText("");
                                         txt_haslo.setText("");
                                     } else {
+                                        System.out.println(
+                                                "You stupid! " + txt_login.getText() + " " + txt_haslo.getText());
                                         lbl_logRej.setForeground(new Color(204, 0, 0));
                                         lbl_logRej.setText("Błędny login lub hasło");
                                         txt_haslo.setText("");
@@ -669,6 +671,13 @@ public class MyPanel extends JPanel {
                                     btn_loginZatw.setText("Zaloguj"); // Zaloguj/Zatwierdź
                                     btn_rejCof.setText("Rejestracja"); // Rejestracja/Cofnij
 
+                                    if (zalogowany) {
+                                        lbl_logRej.setText("Zalogowano!");
+                                        lbl_logRej.setForeground(new Color(0, 184, 0));
+
+                                        txt_login.setText("");
+                                        txt_haslo.setText("");
+                                    }
                                 }
                                 break;
                             case REJESTRACJA:
@@ -683,7 +692,8 @@ public class MyPanel extends JPanel {
                                     boolean powodzenie = (rej == PORAZKA) && !spacje && !pusto;
 
                                     if (powodzenie) {
-                                        etapLog = etapyLogowania.ZALOGOWANO;
+                                        etapLog = etapyLogowania.LOGOWANIE;
+                                        zalogowany = true;
 
                                         new DaneLogowania(DaneLogowania.ostatnieID(), txt_login.getText(),
                                                 txt_haslo.getText());
@@ -752,6 +762,13 @@ public class MyPanel extends JPanel {
                                     btn_loginZatw.setText("Zaloguj"); // Zaloguj/Zatwierdź
                                     btn_rejCof.setText("Rejestracja"); // Rejestracja/Cofnij
 
+                                    if (zalogowany) {
+                                        lbl_logRej.setText("Zalogowano!");
+                                        lbl_logRej.setForeground(new Color(0, 184, 0));
+
+                                        txt_login.setText("");
+                                        txt_haslo.setText("");
+                                    }
                                 }
                                 break;
                         }
@@ -769,6 +786,18 @@ public class MyPanel extends JPanel {
                 btn_loginZatw.addActionListener(listenMainLog);
                 btn_rejCof.addActionListener(listenMainLog);
 
+                if (zalogowany) {
+                    System.out.println("Już zalogowany");
+                }
+                System.out.println(zalogowany);
+
+                if (zalogowany) {
+                    lbl_logRej.setText("Zalogowano!");
+                    lbl_logRej.setForeground(new Color(0, 184, 0));
+
+                    txt_login.setText("");
+                    txt_haslo.setText("");
+                }
                 break;
 
             case DODAJ_PRAC:
