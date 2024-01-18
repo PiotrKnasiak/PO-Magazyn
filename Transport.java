@@ -75,7 +75,7 @@ public class Transport implements Comparable<Transport> {
          if (sprawdzany == null) {
             System.out.println("\t\tNie ma takiego transportu");
          }
-         System.out.println();
+         System.out.println("Nie ma takiego towaru");
          return Towar.stanyTowaru.BLAD;
       }
 

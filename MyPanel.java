@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.TableModel;
 
+import ProjektMagazyn.Towar.stanyTowaru;
 import ProjektMagazyn.Transport.stanyTransportu;
 
 @SuppressWarnings("ALL")
@@ -61,6 +62,7 @@ public class MyPanel extends JPanel {
     public static JButton btn_dodaj;
     public static JButton btn_zapisz;
     public static JButton btn_usun;
+    public static JLabel lbl_zalogojSie;
 
     public static final int SUKCES = 0;
     public static final int BLAD = -1; // częściowo błędne
@@ -168,25 +170,17 @@ public class MyPanel extends JPanel {
     }
 
     public static Object[] listyStrNaObiekty(String[][] str, tabele typ) {
-        // {"ID", "Nazwisko", "Imie", "Zmiana", "Pozycja", "Wypłata"};
-        // {"ID", "Nazwa", "Typ produktu", "Waga [kg]", "Właściciel"};
-        // {"ID towaru", "Nazwa towaru", "Data", "Operacja"};
-
-        // int ID, String zmiana, String imie, String nazwisko,
-        // String pozycja, String wypłata, boolean prank
-
-        // int ID, String nazwa, String typ, int wagaKG, String wlasciciel,
-        // stanyTowaru stanTowaru,boolean prank
-
-        // int ID, String nazwaTowaru, int rok, int miesiac, int dzien, int godzina,
-        // int minuta, stanyTransportu import_eksport, boolean prank
 
         Object[] obiekty = new Object[str.length]; // ok
 
         switch (typ) {
             case PRACOWNICY:
+                // {"ID", "Nazwisko", "Imie", "Zmiana", "Pozycja", "Wypłata"};
+                // int ID, String zmiana, String imie, String nazwisko,
+                // String pozycja, String wypłata, boolean prank
                 for (int i = 0; i < obiekty.length; i++) {
-                    Pracownik pracownik = new Pracownik(Integer.valueOf(str[i][0]), str[i][1],
+                    int ID = Integer.valueOf(str[i][0]);
+                    Pracownik pracownik = new Pracownik(ID, str[i][1],
                             str[i][2], str[i][3], str[i][4], str[i][5], false);
 
                     obiekty[i] = (Object) pracownik;
@@ -194,18 +188,31 @@ public class MyPanel extends JPanel {
                 break;
 
             case TOWARY:
+                // {"ID", "Nazwa", "Typ produktu", "Waga [kg]", "Właściciel"};
+                // int ID, String nazwa, String typ, int wagaKG, String wlasciciel,
+                // stanyTowaru stanTowaru,boolean prank
                 for (int i = 0; i < obiekty.length; i++) {
-                    // Towar towar = new Towar(Integer.valueOf(str[i][0]), str[i][1],
-                    // str[i][2], str[i][3], Towar.stringNaStany(str[i][4]), false);
+                    int ID = Integer.valueOf(str[i][0]);
+                    Towar towar = new Towar(ID, str[i][1], str[i][2], Integer.valueOf(str[i][3]), str[i][4],
+                            Transport.zwrocStanTowaru(ID));
 
                     obiekty[i] = (Object) towar;
                 }
                 break;
 
             case TRANSPORT:
+                // {"ID towaru", "Nazwa towaru", "Data", "Operacja"};
+                // int ID, String nazwaTowaru, int rok, int miesiac, int dzien, int godzina,
+                // int minuta, stanyTransportu import_eksport, boolean prank
                 for (int i = 0; i < obiekty.length; i++) {
-                    Transport transport = new Transport(Integer.valueOf(str[i][0]), str[i][1],
-                            str[i][2], str[i][3], false);
+                    int ID = Integer.valueOf(str[i][0]);
+                    // 03.02.1, 04:05 dd.mm.y hh:minmin
+                    String dataIczas[] = str[i][2].replace(" ", "").split(",");
+                    String dmy[] = dataIczas[0].split(".");
+                    String hm[] = dataIczas[1].split(":");
+                    Transport transport = new Transport(ID, str[i][1], Integer.parseInt(dmy[2]),
+                            Integer.parseInt(dmy[1]), Integer.parseInt(dmy[0]), Integer.parseInt(hm[0]),
+                            Integer.parseInt(hm[1]), Transport.stringNaStany(str[i][3]), false);
 
                     obiekty[i] = (Object) transport;
                 }
@@ -367,11 +374,15 @@ public class MyPanel extends JPanel {
             btn_towary.addActionListener(listenMain);
             btn_trans.addActionListener(listenMain);
             btn_log.addActionListener(listenMain);
+
         }
 
         switch (panel) {
             case PRACOWNICY:
                 System.out.println("Tworzenie okeinka PRACOWNICY");
+
+                if (!zalogowany)
+                    break;
 
                 // przypisywanie komponentów
                 tbl_tabelaMain = new JTable();
@@ -423,6 +434,9 @@ public class MyPanel extends JPanel {
             case TOWARY:
                 System.out.println("Tworzenie okeinka TOWARY");
 
+                if (!zalogowany)
+                    break;
+
                 // przypisywanie komponentów
                 tbl_tabelaMain = new JTable();
                 lbl_nazwaTabeli = new JLabel("Lista towarów");
@@ -472,6 +486,9 @@ public class MyPanel extends JPanel {
 
             case TRANSPORT:
                 System.out.println("Tworzenie okeinka TRANSPORT");
+
+                if (!zalogowany)
+                    break;
 
                 // przypisywanie komponentów
                 tbl_tabelaMain = new JTable();
@@ -787,11 +804,6 @@ public class MyPanel extends JPanel {
                 btn_rejCof.addActionListener(listenMainLog);
 
                 if (zalogowany) {
-                    System.out.println("Już zalogowany");
-                }
-                System.out.println(zalogowany);
-
-                if (zalogowany) {
                     lbl_logRej.setText("Zalogowano!");
                     lbl_logRej.setForeground(new Color(0, 184, 0));
 
@@ -861,7 +873,29 @@ public class MyPanel extends JPanel {
                 break;
         }
 
-        System.out.println("Kaniec");
+        if (panel == panele.PRACOWNICY || panel == panele.TOWARY || panel == panele.TRANSPORT) {
+
+            lbl_zalogojSie = new JLabel("Nie jeseś zalogowany!", SwingConstants.CENTER);
+
+            fr_main.add(lbl_zalogojSie);
+            lbl_zalogojSie.setBounds(225, 250, 350, 40);
+            lbl_zalogojSie.setFont(new Font("Dialog", Font.BOLD, 30));
+
+            lbl_zalogojSie.setVisible(false);
+
+            if (!zalogowany) {
+                lbl_zalogojSie.setVisible(true);
+                System.out.println("Niezalogowany! (stoopid)");
+                setPreferredSize(new Dimension(800, 600));
+                setLayout(null);
+
+                btn_prac.setBounds(20, 17, 125, 30);
+                btn_towary.setBounds(160, 17, 125, 30);
+                btn_trans.setBounds(300, 17, 125, 30);
+                btn_log.setBounds(440, 17, 125, 30);
+            }
+        }
+        revalidate();
     }
 
     public static void main(String[] args) {
