@@ -53,32 +53,30 @@ public class MyPanel extends JPanel {
     public static JFrame fr_dodajPrzychodzoce;
 
     // elementy fr_main - ogólne
-    public static JButton btn_prac;
-    public static JButton btn_towary;
-    public static JButton btn_trans;
-    public static JButton btn_log;
-    public static JLabel lbl_nazwaTabeli;
-    public static JScrollPane scr_tabeli;
+    public JButton btn_prac;
+    public JButton btn_towary;
+    public JButton btn_trans;
+    public JButton btn_log;
+    public JLabel lbl_nazwaTabeli;
+    public JScrollPane scr_tabeli;
     public static JTable tbl_tabelaMain;
-    public static JButton btn_dodaj;
-    public static JButton btn_zapisz;
-    public static JButton btn_usun;
-    public static JLabel lbl_zalogojSie;
+    public JButton btn_dodaj;
+    public JButton btn_zapisz;
+    public JButton btn_usun;
+    public JLabel lbl_zalogojSie;
 
     public static final int SUKCES = 0;
     public static final int BLAD = -1; // częściowo błędne
     public static final int PORAZKA = -2;
 
-    public static Pracownik[] pracownicy;
     public static Towar[] towary;
-    public static Transport[] transporty;
 
     // elementy fr_main - pracownicy
 
     // elementy fr_main - towary
-    public static JButton btn_sortujID;
-    public static JButton btn_sortujWaga;
-    public static JButton btn_sortujWlasc;
+    public JButton btn_sortujID;
+    public JButton btn_sortujWaga;
+    public JButton btn_sortujWlasc;
 
     // elementy fr_main - transport
 
@@ -113,7 +111,7 @@ public class MyPanel extends JPanel {
         switch (typ) {
             case PRACOWNICY:
                 stringi = new String[obiekty.length][6];
-                pracownicy = new Pracownik[obiekty.length];
+                Pracownik[] pracownicy = new Pracownik[obiekty.length];
 
                 for (int i = 0; i < obiekty.length; i++) {
                     pracownicy[i] = (Pracownik) obiekty[i];
@@ -148,7 +146,7 @@ public class MyPanel extends JPanel {
 
             case TRANSPORT:
                 stringi = new String[obiekty.length][4];
-                transporty = new Transport[obiekty.length];
+                Transport[] transporty = new Transport[obiekty.length];
 
                 for (int i = 0; i < obiekty.length; i++) {
                     transporty[i] = (Transport) obiekty[i];
@@ -265,9 +263,9 @@ public class MyPanel extends JPanel {
                     break;
 
             }
-            Towar.listaTowarow.sort(Towar.porownajID);
+            towary = Towar.zwrocMagazyn();
 
-            String dane[][] = obiektyNaListyStr(Towar.listaTowarow.toArray(), typ);
+            String dane[][] = obiektyNaListyStr(towary, typ);
 
             tbl_tabelaMain = new JTable(dane, kolumny);
             tbl_tabelaMain.setBounds(20, 100, 760, 390);
@@ -310,7 +308,6 @@ public class MyPanel extends JPanel {
 
     public MyPanel(panele panel) {
 
-        System.out.println("\nTworzenie nowego okienka");
         boolean sukcesTabeli = true;
 
         if (panel == panele.PRACOWNICY || panel == panele.TOWARY || panel == panele.TRANSPORT
@@ -321,28 +318,23 @@ public class MyPanel extends JPanel {
             btn_trans = new JButton("Transfery");
             btn_log = new JButton("Logowanie");
 
-            System.out.println("Tworzenie głównego listenera");
             // ogólny actionLietener dla fr_main
             ActionListener listenMain = new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
                     if (event.getSource() == btn_prac) {
-                        System.out.println("Działa...");
                         fr_main.getContentPane().removeAll();
                         fr_main.getContentPane().add(new MyPanel(panele.PRACOWNICY));
                     }
                     if (event.getSource() == btn_towary) {
-                        System.out.println("Działa...");
                         fr_main.getContentPane().removeAll();
                         fr_main.getContentPane().add(new MyPanel(panele.TOWARY));
                     }
                     if (event.getSource() == btn_trans) {
-                        System.out.println("Działa...");
                         fr_main.getContentPane().removeAll();
                         fr_main.getContentPane().add(new MyPanel(panele.TRANSPORT));
                     }
                     if (event.getSource() == btn_log) {
-                        System.out.println("Działa...");
                         fr_main.getContentPane().removeAll();
                         fr_main.getContentPane().add(new MyPanel(panele.LOGOWANIE));
                     }
@@ -957,18 +949,29 @@ public class MyPanel extends JPanel {
 
     public static void main(String[] args) {
 
-        new Pracownik();
-        new Pracownik(4, "Dzienna", "Arkadiusz", "Poranny", "Kierowca ciężarówki (pet)", "3700");
-        new Pracownik(5, "Nocna", "Marcin", "Walaszek", "Operator wózka widłowego (baza)", "5700");
-        new Pracownik();
-        new Towar();
+        new Pracownik(1, "Nocna", "Filip", "Wisiewski", "praktykant (niewolnik)", "0");
+        new Pracownik(2, "Dzienna", "Tymoteusz", "Mareewski", "praktykant (niewolnik)", "0");
+        new Pracownik(3, "Dzienna i nocna", "Marcin", "Walaszek", "Operator wózka widłowego ", "5700");
+        new Pracownik(4, "Dzienna", "Arkadiusz", "Poranny", "Kierowca ciężarówki", "3700");
+
+        new Towar(1, "Cegły", "Materiały budowlane", 2000, "SP-bud z.o.o.", Towar.stanyTowaru.DO_ODBIORU);
+        new Towar(2, "Wykałaczki", "Spożywcze", 50, "Jeff", Towar.stanyTowaru.DO_ODBIORU);
+        new Towar(3, "Miedź", "Surowce", 4500, "MiedźoMiedź s.a.", Towar.stanyTowaru.DO_ODBIORU);
         new Towar(4, "Karton-gips", "Materiały budowlane", 800, "SP-bud z.o.o.", Towar.stanyTowaru.DO_ODBIORU);
-        new Towar();
-        new Towar();
-        new Transport();
-        new Transport();
-        new Transport();
-        new Transport();
+
+        new Transport(1, "Odbior Cegieł", 2022, 11, 18, 17, 15, Transport.stanyTransportu.IMPORT);
+        new Transport(1, "Wywoz Cegieł", 2023, 11, 18, 17, 15, Transport.stanyTransportu.EKSPORT);
+        new Transport(2, "Odbiór kolekcji wykałaczek", 2024, 3, 8, 15, 12, Transport.stanyTransportu.IMPORT);
+        new Transport(3, "Odbior Miedzi", 2003, 10, 1, 7, 6, Transport.stanyTransportu.IMPORT);
+        new Transport(4, "Odbior Karon Gipsu", 2023, 11, 18, 17, 15, Transport.stanyTransportu.IMPORT);
+        new Transport(4, "Wysyłka Karon Gipsu", 2024, 11, 18, 17, 15, Transport.stanyTransportu.EKSPORT);
+
+        // Towar wMag[] = Towar.zwrocMagazyn();
+        for (int i = 0; i < Towar.listaTowarow.size(); i++) {
+            Towar towar = Towar.listaTowarow.get(i);
+            towar.stanTowaru = Transport.zwrocStanTowaru(towar.ID);
+            Towar.listaTowarow.set(i, towar);
+        }
 
         MyPanel panelLog = new MyPanel(panele.LOGOWANIE);
         // String[][] sty = new String[5][6];
@@ -1041,5 +1044,6 @@ public class MyPanel extends JPanel {
 
         fr_dodajWysylke.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
 
+        System.out.println("\n\nKoniec main\n\n");
     }
 }

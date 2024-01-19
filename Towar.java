@@ -16,7 +16,7 @@ public class Towar implements Comparable<Towar> {
         BLAD
     }
 
-    public static Towar znajdzPoID(int ID) {
+    public static Towar znajdzPoID(int ID, boolean alert) {
         Towar sprawdzany = null;
 
         for (int i = 0; i < Towar.listaTowarow.size(); i++) {
@@ -26,10 +26,45 @@ public class Towar implements Comparable<Towar> {
         }
 
         if (sprawdzany == null) {
-            System.out.println("\n*** Error!\n\tNiepowodzenie w Towar.znajdzPoID(" + ID + ")!\n");
+            if (alert) {
+                System.out.println(
+                        "\n*** Error!\n\tNiepowodzenie w Towar.znajdzPoID(" + ID
+                                + ", true)!\n\t  Nie ma takiego towaru");
+            }
         }
 
         return sprawdzany;
+    }
+
+    /*
+     * public static boolean sprawdzMagazyn(int ID) {
+     * for (Towar t : listaTowarow) {
+     * if (t.ID == ID) {
+     * Towar.stanyTowaru stanTow = Transport.zwrocStanTowaru(t.ID);
+     * if ((stanTow == stanyTowaru.BLAD && t.stanTowaru == stanyTowaru.W_MAGAZYNIE)
+     * || stanTow == stanyTowaru.W_MAGAZYNIE) {
+     * return true;
+     * }
+     * break;
+     * }
+     * }
+     * return false;
+     * }
+     */
+    public static Towar[] zwrocMagazyn() {
+        Towar tow[] = new Towar[0];
+        ArrayList<Towar> mag = new ArrayList<>();
+
+        for (Towar t : listaTowarow) {
+            Towar.stanyTowaru stanTow = Transport.zwrocStanTowaru(t.ID);
+            if ((stanTow == stanyTowaru.BLAD && t.stanTowaru == stanyTowaru.W_MAGAZYNIE)
+                    || stanTow == stanyTowaru.W_MAGAZYNIE) {
+                mag.add(t);
+            }
+        }
+
+        ileMagazyn = mag.size();
+        return mag.toArray(tow);
     }
 
     public Towar() {
@@ -55,7 +90,10 @@ public class Towar implements Comparable<Towar> {
         this.wlasciciel = wlasciciel;
         this.stanTowaru = stanTowaru;
 
-        listaTowarow.add(this);
+        if (znajdzPoID(ID, false) == null)
+            listaTowarow.add(this);
+        else
+            System.out.println("\n*** Error!\n\tTowar o takim ID już istnieje! Nie został dodany to listy!\n");
     }
 
     public Towar(int ID, String nazwa, String typ, int wagaKG, String wlasciciel, stanyTowaru stanTowaru,
@@ -77,6 +115,7 @@ public class Towar implements Comparable<Towar> {
     stanyTowaru stanTowaru = stanyTowaru.W_MAGAZYNIE;
 
     static List<Towar> listaTowarow = new ArrayList<>();
+    public static int ileMagazyn = 0;
 
     static Collator kolator = Collator.getInstance(new Locale("pl"));
 

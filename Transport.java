@@ -52,34 +52,28 @@ public class Transport implements Comparable<Transport> {
       return ldt;
    }
 
-   public static Towar.stanyTowaru zwrocStanTowaru(int ID) {
-      Transport sprawdzany = null;
-      boolean znaleziony = true;
+   public static Transport[] listaTransTowaru(int ID) {
+      ArrayList<Transport> transporty = new ArrayList<>();
 
       for (int i = 0; i < Transport.listaTransportow.size(); i++) {
          if (Transport.listaTransportow.get(i).ID == ID) {
-            sprawdzany = Transport.listaTransportow.get(i);
-            break;
+            transporty.add(Transport.listaTransportow.get(i));
          }
       }
 
-      if (Towar.znajdzPoID(ID) == null) {
-         znaleziony = false;
-      }
+      if (transporty.size() == 0)
+         return null;
 
-      if (sprawdzany == null || !znaleziony) {
-         System.out.println("\n*** Error!\n\tNiepowodzenie w zwrocStanTowaru(" + ID + ")!");
-         if (!znaleziony) {
-            System.out.println("\t\tNie ma takiego towaru");
-         }
-         if (sprawdzany == null) {
-            System.out.println("\t\tNie ma takiego transportu");
-         }
-         System.out.println("Nie ma takiego towaru");
+      return transporty.toArray(new Transport[0]);
+   }
+
+   static Towar.stanyTowaru stanTowaruTeraz(Transport trans) {
+
+      if (trans == null)
          return Towar.stanyTowaru.BLAD;
-      }
 
-      int porownanieCzas = LocalDateTime.now().compareTo(sprawdzany.dataTransportu);
+      int porownanieCzas = LocalDateTime.now().compareTo(trans.dataTransportu);
+
       // teraz większe od daty -> 1
       // teraz równe dacie -> 0
       // teraz mniejsze od daty -> -1
@@ -88,20 +82,102 @@ public class Transport implements Comparable<Transport> {
       // data teraz -> 0
       // data w przyszłośi -> -1
 
-      if (sprawdzany.import_eksport == Transport.stanyTransportu.IMPORT) {
+      if (trans.import_eksport == Transport.stanyTransportu.IMPORT) {
          if (porownanieCzas >= 0) {
             return Towar.stanyTowaru.W_MAGAZYNIE;
          } else {
             return Towar.stanyTowaru.DO_ODBIORU;
          }
       } else {
-         if (porownanieCzas <= 0) {
+         if (porownanieCzas >= 0) {
             return Towar.stanyTowaru.WYWIEZIONY;
          } else {
             return Towar.stanyTowaru.W_MAGAZYNIE;
          }
-
       }
+   }
+
+   public static Towar.stanyTowaru zwrocStanTowaru(int ID) {
+
+      Transport[] sprawdzane = listaTransTowaru(ID);
+      boolean znaleziony = true;
+      Transport imp = null, eksp = null;
+
+      if (Towar.znajdzPoID(ID, false) == null) {
+         znaleziony = false;
+      }
+
+      if (sprawdzane == null || !znaleziony) {
+         System.out.println("\n*** Error!\n\tNiepowodzenie w zwrocStanTowaru(" + ID + ")!");
+         if (!znaleziony) {
+            System.out.println("\t\tNie ma takiego towaru");
+         } else if (sprawdzane == null) {
+            System.out.println("\t\tNie ma takiego transportu - Domyślnie w magazynie");
+            return Towar.stanyTowaru.W_MAGAZYNIE;
+         }
+         return Towar.stanyTowaru.BLAD;
+      }
+
+      System.out.println("Towar o ID: " + ID + " ma " + sprawdzane.length + " transportów");
+
+      if (sprawdzane.length == 1) {
+         return stanTowaruTeraz(sprawdzane[0]);
+      }
+
+      if (sprawdzane.length >= 2) {
+         if (sprawdzane[sprawdzane.length - 1].import_eksport == stanyTransportu.IMPORT) {
+            imp = sprawdzane[sprawdzane.length - 1];
+            for (int i = sprawdzane.length - 2; i >= 0; i--) {
+               if (sprawdzane[i].import_eksport == stanyTransportu.EKSPORT) {
+                  eksp = sprawdzane[i];
+                  break;
+               }
+            }
+         } else {
+            eksp = sprawdzane[sprawdzane.length - 1];
+            for (int i = sprawdzane.length - 2; i >= 0; i--) {
+               if (sprawdzane[i].import_eksport == stanyTransportu.IMPORT) {
+                  imp = sprawdzane[i];
+                  break;
+               }
+            }
+         }
+         if (eksp == null)
+            System.out.println("Eksp to null");
+         if (imp == null)
+            System.out.println("Imp to null");
+
+         Towar.stanyTowaru stanE = stanTowaruTeraz(eksp);
+         Towar.stanyTowaru stanI = stanTowaruTeraz(imp);
+
+         System.out.println("data stanI to" + dataTransNaString(imp.dataTransportu));
+         System.out.println("data stanE to" + dataTransNaString(eksp.dataTransportu));
+         if (stanI == Towar.stanyTowaru.DO_ODBIORU)
+            System.out.print("stanI to: DO_ODBIORU, ");
+         else if (stanI == Towar.stanyTowaru.BLAD)
+            System.out.print("stanI to: BLAD, ");
+         else
+            System.out.print("stanI to: W_MAGAZYNIE, ");
+
+         if (stanE == Towar.stanyTowaru.WYWIEZIONY)
+            System.out.println("stanE to: WYWIEZIONY ");
+         else if (stanE == Towar.stanyTowaru.BLAD)
+            System.out.println("stanE to: BLAD ");
+         else
+            System.out.println("stanE to: W_MAGAZYNIE ");
+         System.out.println();
+
+         if (stanE == null)
+            return stanI;
+         if (imp == null)
+            return stanE;
+
+         if (stanE == Towar.stanyTowaru.WYWIEZIONY)
+            return stanE;
+         return stanI;
+      }
+
+      return Towar.stanyTowaru.W_MAGAZYNIE;
    }
 
    public Transport() {
