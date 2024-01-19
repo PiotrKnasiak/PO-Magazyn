@@ -157,13 +157,13 @@ public class Transport implements Comparable<Transport> {
             return 1;
          if (t1.ID < t2.ID)
             return -1;
-         return 0;
+         return porownajData.compare(t1, t2);
       }
    };
    static Comparator<Transport> porownajData = new Comparator<Transport>() {
       @Override
       public int compare(Transport t1, Transport t2) {
-         return kolator.compare(t1, t2);
+         return kolator.compare(dataTransNaString(t1.dataTransportu), dataTransNaString(t2.dataTransportu));
       }
    };
 

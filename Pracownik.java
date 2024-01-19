@@ -101,7 +101,8 @@ public class Pracownik extends Osoba implements Comparable<Pracownik> {
 
     @Override
     public String toString() {
-        return super.toString() + ", zmiana - " + this.zmiana;
+        return "\n   ID:" + this.ID + "\n" + super.toString() + "\tzmiana: " + this.zmiana + "\n\tpozycja: "
+                + this.pozycja + "\n\twypłata: " + this.wypłata.toString();
     }
 
     static Collator kolator = Collator.getInstance(new Locale("pl"));

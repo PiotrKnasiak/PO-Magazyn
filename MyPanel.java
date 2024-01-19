@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import ProjektMagazyn.Towar.stanyTowaru;
@@ -96,7 +97,7 @@ public class MyPanel extends JPanel {
     private Font czcionka = new Font("Dialog", Font.PLAIN, 18);
     private Font czcionkaB = new Font("Dialog", Font.BOLD, 14);
 
-    private static boolean zalogowany = false;
+    private static boolean zalogowany = true;
     static int licznik = 0;
     private static String sortTow = "ID"; // ID, Wlasc, Waga
     private static etapyLogowania etapLog = etapyLogowania.LOGOWANIE;
@@ -180,8 +181,8 @@ public class MyPanel extends JPanel {
                 // String pozycja, String wypłata, boolean prank
                 for (int i = 0; i < obiekty.length; i++) {
                     int ID = Integer.valueOf(str[i][0]);
-                    Pracownik pracownik = new Pracownik(ID, str[i][1],
-                            str[i][2], str[i][3], str[i][4], str[i][5], false);
+                    Pracownik pracownik = new Pracownik(ID, str[i][3],
+                            str[i][2], str[i][1], str[i][4], str[i][5], false);
 
                     obiekty[i] = (Object) pracownik;
                 }
@@ -231,12 +232,9 @@ public class MyPanel extends JPanel {
         if (typ == tabele.PRACOWNICY) {
             String kolumny[] = { "ID", "Nazwisko", "Imie", "Zmiana", "Pozycja", "Wypłata" };
 
-            Pracownik.listaPracownikow.clear();
+            // Pracownik.listaPracownikow.clear();
             /* zastąpić łądownaiem z pliku */
-            new Pracownik();
-            new Pracownik(4, "Dzienna", "Arkadiusz", "Poranny", "Kierowca ciężarówki (pet)", "3700");
-            new Pracownik(5, "Nocna", "Marcin", "Walaszek", "Operator wózka widłowego (baza)", "5700");
-            new Pracownik();
+
             // TU !!! wczytaj
 
             Pracownik.listaPracownikow.sort(Pracownik.porownajID);
@@ -249,12 +247,8 @@ public class MyPanel extends JPanel {
         } else if (typ == tabele.TOWARY) {
             String kolumny[] = { "ID", "Nazwa", "Typ produktu", "Waga [kg]", "Właściciel" };
 
-            Towar.listaTowarow.clear();
+            // Towar.listaTowarow.clear();
             /* zastąpić łądownaiem z pliku */
-            new Towar();
-            new Towar(4, "Karton-gips", "Materiały budowlane", 800, "SP-bud z.o.o.", Towar.stanyTowaru.DO_ODBIORU);
-            new Towar();
-            new Towar();
             // TU !!! wczytaj
 
             switch (sortTow) {
@@ -281,12 +275,8 @@ public class MyPanel extends JPanel {
         } else if (typ == tabele.TRANSPORT) {
             String kolumny[] = { "ID towaru", "Nazwa towaru", "Data", "Operacja" };
 
-            Transport.listaTransportow.clear();
+            // Transport.listaTransportow.clear();
             /* zastąpić łądownaiem z pliku */
-            new Transport();
-            new Transport();
-            new Transport();
-            new Transport();
             // TU !!! wczytaj
 
             Transport.listaTransportow.sort(Transport.porownajID);
@@ -424,10 +414,35 @@ public class MyPanel extends JPanel {
 
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_log) {
+                        if (event.getSource() == btn_dodaj) {
+                            fr_dodajPrac.setVisible(true);
+                        }
+                        if (event.getSource() == btn_usun) {
+                            fr_usunPracownika.setVisible(true);
+                        }
+                        if (event.getSource() == btn_zapisz) {
+
+                            TableModel model = tbl_tabelaMain.getModel();
+                            String numdata[][] = new String[model.getRowCount()][model.getColumnCount()];
+
+                            for (int countR = 0; countR < model.getRowCount(); countR++) {
+
+                                for (int countC = 0; countC < model.getColumnCount(); countC++) {
+                                    numdata[countR][countC] = model.getValueAt(countR, countC).toString();
+                                }
+                            }
+
+                            Object[] obi = listyStrNaObiekty(numdata, tabele.PRACOWNICY);
+                            for (int i = 0; i < obi.length; i++) {
+                                Pracownik.listaPracownikow.set(i, (Pracownik) obi[i]);
+                            }
                         }
                     }
                 };
+
+                btn_dodaj.addActionListener(listenMainPrac);
+                btn_usun.addActionListener(listenMainPrac);
+                btn_zapisz.addActionListener(listenMainPrac);
 
                 break;
 
@@ -475,12 +490,35 @@ public class MyPanel extends JPanel {
 
                 // Action Listener
                 ActionListener listenMainTow = new ActionListener() {
-                    @Override
+                    @Overridedodawanie
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_log) {
+                        if (event.getSource() == btn_dodaj) {
+                        }
+                        if (event.getSource() == btn_usun) {
+                        }
+                        if (event.getSource() == btn_zapisz) {
+
+                            TableModel model = tbl_tabelaMain.getModel();
+                            String numdata[][] = new String[model.getRowCount()][model.getColumnCount()];
+
+                            for (int countR = 0; countR < model.getRowCount(); countR++) {
+
+                                for (int countC = 0; countC < model.getColumnCount(); countC++) {
+                                    numdata[countR][countC] = model.getValueAt(countR, countC).toString();
+                                }
+                            }
+
+                            Object[] obi = listyStrNaObiekty(numdata, tabele.TOWARY);
+                            for (int i = 0; i < obi.length; i++) {
+                                Towar.listaTowarow.set(i, (Towar) obi[i]);
+                            }
                         }
                     }
                 };
+
+                btn_dodaj.addActionListener(listenMainTow);
+                btn_usun.addActionListener(listenMainTow);
+                btn_zapisz.addActionListener(listenMainTow);
 
                 break;
 
@@ -532,6 +570,25 @@ public class MyPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent event) {
                         if (event.getSource() == btn_dodaj) {
+                        }
+                        if (event.getSource() == btn_usun) {
+                        }
+                        if (event.getSource() == btn_zapisz) {
+
+                            TableModel model = tbl_tabelaMain.getModel();
+                            String numdata[][] = new String[model.getRowCount()][model.getColumnCount()];
+
+                            for (int countR = 0; countR < model.getRowCount(); countR++) {
+
+                                for (int countC = 0; countC < model.getColumnCount(); countC++) {
+                                    numdata[countR][countC] = model.getValueAt(countR, countC).toString();
+                                }
+                            }
+
+                            Object[] obi = listyStrNaObiekty(numdata, tabele.TRANSPORT);
+                            for (int i = 0; i < obi.length; i++) {
+                                Transport.listaTransportow.set(i, (Transport) obi[i]);
+                            }
                         }
                     }
                 };
@@ -899,6 +956,20 @@ public class MyPanel extends JPanel {
     }
 
     public static void main(String[] args) {
+
+        new Pracownik();
+        new Pracownik(4, "Dzienna", "Arkadiusz", "Poranny", "Kierowca ciężarówki (pet)", "3700");
+        new Pracownik(5, "Nocna", "Marcin", "Walaszek", "Operator wózka widłowego (baza)", "5700");
+        new Pracownik();
+        new Towar();
+        new Towar(4, "Karton-gips", "Materiały budowlane", 800, "SP-bud z.o.o.", Towar.stanyTowaru.DO_ODBIORU);
+        new Towar();
+        new Towar();
+        new Transport();
+        new Transport();
+        new Transport();
+        new Transport();
+
         MyPanel panelLog = new MyPanel(panele.LOGOWANIE);
         // String[][] sty = new String[5][6];
 
@@ -918,80 +989,57 @@ public class MyPanel extends JPanel {
         // System.out.println(sty.length);
         // System.out.println(panelLog.txt_login.getFont().toString());
 
-        /*
-         * fr_dodajPrac = new JFrame ("Dodawanie pracownika");
-         * fr_dodajPrac.setDefaultCloseOperation (JFrame.DISPOSE_ON_CLOSE); // zamknij
-         * tylko to
-         * fr_dodajPrac.getContentPane().add (new MyPanel(panele.DODAJ_PRAC));
-         * fr_dodajPrac.pack();
-         * fr_dodajPrac.addComponentListener(new ComponentAdapter() {
-         * 
-         * @Override
-         * public void componentHidden(ComponentEvent e) {
-         * System.out.println("Replace sysout with your method call");
-         * ((JFrame)(e.getComponent())).dispose();
-         * }
-         * });
-         * 
-         * fr_dodajPrac.setVisible (true); // czy rozpocząć proces, nie tylko czy
-         * pokazać
-         */
+        fr_dodajPrac = new JFrame("Dodawanie pracownika");
+        fr_dodajPrac.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
+        fr_dodajPrac.getContentPane().add(new MyPanel(panele.DODAJ_PRAC));
+        fr_dodajPrac.pack();
 
-        /*
-         * fr_usunPracownika = new JFrame ("Usówanie pracownika");
-         * fr_usunPracownika.setDefaultCloseOperation (JFrame.DISPOSE_ON_CLOSE); //
-         * zamknij tylko to
-         * fr_usunPracownika.getContentPane().add (new MyPanel(panele.USUN_PRAC));
-         * fr_usunPracownika.pack();
-         * fr_usunPracownika.addComponentListener(new ComponentAdapter() {
-         * 
-         * @Override
-         * public void componentHidden(ComponentEvent e) {
-         * System.out.println("Replace sysout with your method call");
-         * ((JFrame)(e.getComponent())).dispose();
-         * }
-         * });
-         * 
-         * fr_usunPracownika.setVisible (true); // czy rozpocząć proces, nie tylko czy
-         * pokazać
-         */
+        fr_dodajPrac.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
 
-        /*
-         * fr_dodajPrzychodzoce = new JFrame ("Logowanie odbioru towaru");
-         * fr_dodajPrzychodzoce.setDefaultCloseOperation (JFrame.DISPOSE_ON_CLOSE); //
-         * zamknij tylko to
-         * fr_dodajPrzychodzoce.getContentPane().add (new MyPanel(panele.DODAJ_TOWAR));
-         * fr_dodajPrzychodzoce.pack();
-         * fr_dodajPrzychodzoce.addComponentListener(new ComponentAdapter() {
-         * 
-         * @Override
-         * public void componentHidden(ComponentEvent e) {
-         * System.out.println("Replace sysout with your method call");
-         * ((JFrame)(e.getComponent())).dispose();
-         * }
-         * });
-         * 
-         * fr_dodajPrzychodzoce.setVisible (true); // czy rozpocząć proces, nie tylko
-         * czy pokazać
-         */
+        fr_usunPracownika = new JFrame("Usówanie pracownika");
+        fr_usunPracownika.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
+        fr_usunPracownika.getContentPane().add(new MyPanel(panele.USUN_PRAC));
+        fr_usunPracownika.pack();
+        fr_usunPracownika.addComponentListener(new ComponentAdapter() {
 
-        /*
-         * fr_dodajWysylke = new JFrame ("Planowanie wysyłki towaru");
-         * fr_dodajWysylke.setDefaultCloseOperation (JFrame.DISPOSE_ON_CLOSE); //
-         * zamknij tylko to
-         * fr_dodajWysylke.getContentPane().add (new MyPanel(panele.WYSLIJ_TOWAR));
-         * fr_dodajWysylke.pack();
-         * fr_dodajWysylke.addComponentListener(new ComponentAdapter() {
-         * 
-         * @Override
-         * public void componentHidden(ComponentEvent e) {
-         * System.out.println("Replace sysout with your method call");
-         * ((JFrame)(e.getComponent())).dispose();
-         * }
-         * });
-         * 
-         * fr_dodajWysylke.setVisible (true); // czy rozpocząć proces, nie tylko czy
-         * pokazać
-         */
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                System.out.println("Replace sysout with your method call");
+                ((JFrame) (e.getComponent())).dispose();
+            }
+        });
+
+        fr_usunPracownika.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
+
+        fr_dodajPrzychodzoce = new JFrame("Logowanie odbioru towaru");
+        fr_dodajPrzychodzoce.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
+        fr_dodajPrzychodzoce.getContentPane().add(new MyPanel(panele.DODAJ_TOWAR));
+        fr_dodajPrzychodzoce.pack();
+        fr_dodajPrzychodzoce.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                System.out.println("Replace sysout with your method call");
+                ((JFrame) (e.getComponent())).dispose();
+            }
+        });
+
+        fr_dodajPrzychodzoce.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
+
+        fr_dodajWysylke = new JFrame("Planowanie wysyłki towaru");
+        fr_dodajWysylke.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
+        fr_dodajWysylke.getContentPane().add(new MyPanel(panele.WYSLIJ_TOWAR));
+        fr_dodajWysylke.pack();
+        fr_dodajWysylke.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                System.out.println("Replace sysout with your method call");
+                ((JFrame) (e.getComponent())).dispose();
+            }
+        });
+
+        fr_dodajWysylke.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
+
     }
 }
