@@ -9,7 +9,6 @@ import java.util.Locale;
 //import Testy.Ksiazka;
 
 public class Pracownik extends Osoba implements Comparable<Pracownik> {
-    public static String waluta = "zł";
 
     Pracownik() {
         listaPracownikow.add(this);
@@ -22,7 +21,7 @@ public class Pracownik extends Osoba implements Comparable<Pracownik> {
         this.imie = imie;
         this.nazwisko = nazwisko;
         this.pozycja = pozycja;
-        this.wypłata = wypłata + waluta;
+        this.wypłata = wypłata;
         // dodanie instancji obiektu do statycznej listy
         listaPracownikow.add(this);
     }
@@ -34,7 +33,7 @@ public class Pracownik extends Osoba implements Comparable<Pracownik> {
         this.imie = imie;
         this.nazwisko = nazwisko;
         this.pozycja = pozycja;
-        this.wypłata = wypłata + waluta;
+        this.wypłata = wypłata;
         // dodanie instancji obiektu do statycznej listy
     }
 

@@ -36,6 +36,18 @@ public class Towar implements Comparable<Towar> {
         return sprawdzany;
     }
 
+    public static int miejsceWTab(int ID) {
+        int miejsce = 0;
+
+        for (; miejsce < Towar.listaTowarow.size(); miejsce++) {
+            if (Towar.listaTowarow.get(miejsce).ID == ID) {
+                return miejsce;
+            }
+        }
+
+        return miejsce;
+    }
+
     /*
      * public static boolean sprawdzMagazyn(int ID) {
      * for (Towar t : listaTowarow) {
@@ -115,6 +127,7 @@ public class Towar implements Comparable<Towar> {
     stanyTowaru stanTowaru = stanyTowaru.W_MAGAZYNIE;
 
     static List<Towar> listaTowarow = new ArrayList<>();
+    static List<Towar> listaTowarowWMag = new ArrayList<>();
     public static int ileMagazyn = 0;
 
     static Collator kolator = Collator.getInstance(new Locale("pl"));
@@ -166,4 +179,10 @@ public class Towar implements Comparable<Towar> {
             return porownajNaz.compare(t1, t2);
         }
     };
+
+    @Override
+    public String toString() {
+        return "\n   ID:" + this.ID + "\n\tNazwa: " + this.nazwa + "\n\tWłaściciel: "
+                + this.wlasciciel + "\n\tWaga: " + this.wagaKG;
+    }
 }

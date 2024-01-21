@@ -118,7 +118,8 @@ public class Transport implements Comparable<Transport> {
          return Towar.stanyTowaru.BLAD;
       }
 
-      System.out.println("Towar o ID: " + ID + " ma " + sprawdzane.length + " transportów");
+      // System.out.println("Towar o ID: " + ID + " ma " + sprawdzane.length + "
+      // transportów");
 
       if (sprawdzane.length == 1) {
          return stanTowaruTeraz(sprawdzane[0]);
@@ -142,30 +143,32 @@ public class Transport implements Comparable<Transport> {
                }
             }
          }
-         if (eksp == null)
-            System.out.println("Eksp to null");
-         if (imp == null)
-            System.out.println("Imp to null");
+         // if (eksp == null)
+         // System.out.println("Eksp to null");
+         // if (imp == null)
+         // System.out.println("Imp to null");
 
          Towar.stanyTowaru stanE = stanTowaruTeraz(eksp);
          Towar.stanyTowaru stanI = stanTowaruTeraz(imp);
 
-         System.out.println("data stanI to" + dataTransNaString(imp.dataTransportu));
-         System.out.println("data stanE to" + dataTransNaString(eksp.dataTransportu));
-         if (stanI == Towar.stanyTowaru.DO_ODBIORU)
-            System.out.print("stanI to: DO_ODBIORU, ");
-         else if (stanI == Towar.stanyTowaru.BLAD)
-            System.out.print("stanI to: BLAD, ");
-         else
-            System.out.print("stanI to: W_MAGAZYNIE, ");
-
-         if (stanE == Towar.stanyTowaru.WYWIEZIONY)
-            System.out.println("stanE to: WYWIEZIONY ");
-         else if (stanE == Towar.stanyTowaru.BLAD)
-            System.out.println("stanE to: BLAD ");
-         else
-            System.out.println("stanE to: W_MAGAZYNIE ");
-         System.out.println();
+         /*
+          * System.out.println("data stanI to" + dataTransNaString(imp.dataTransportu));
+          * System.out.println("data stanE to" + dataTransNaString(eksp.dataTransportu));
+          * if (stanI == Towar.stanyTowaru.DO_ODBIORU)
+          * System.out.print("stanI to: DO_ODBIORU, ");
+          * else if (stanI == Towar.stanyTowaru.BLAD)
+          * System.out.print("stanI to: BLAD, ");
+          * else
+          * System.out.print("stanI to: W_MAGAZYNIE, ");
+          * 
+          * if (stanE == Towar.stanyTowaru.WYWIEZIONY)
+          * System.out.println("stanE to: WYWIEZIONY ");
+          * else if (stanE == Towar.stanyTowaru.BLAD)
+          * System.out.println("stanE to: BLAD ");
+          * else
+          * System.out.println("stanE to: W_MAGAZYNIE ");
+          * System.out.println();
+          */
 
          if (stanE == null)
             return stanI;
@@ -202,9 +205,8 @@ public class Transport implements Comparable<Transport> {
       listaTransportow.add(this);
    }
 
-   public Transport(int ID, String nazwaTowaru, int rok, int miesiac, int dzien, int godzina, int minuta, // bez
-                                                                                                          // dodawania
-         stanyTransportu import_eksport, boolean prank) {
+   public Transport(int ID, String nazwaTowaru, int rok, int miesiac, int dzien, int godzina,
+         int minuta, stanyTransportu import_eksport, boolean prank) {// bez dodawania
 
       this.ID = ID;
       this.nazwaTowaru = nazwaTowaru;

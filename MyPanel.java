@@ -15,6 +15,7 @@ import ProjektMagazyn.Transport.stanyTransportu;
 @SuppressWarnings("ALL")
 public class MyPanel extends JPanel {
 
+    // #region Enumy
     public static enum panele {
         PRACOWNICY,
         TOWARY,
@@ -44,13 +45,15 @@ public class MyPanel extends JPanel {
         KOD,
         REJESTRACJA
     }
+    // #endregion
 
+    // #region Okienka i ich elementy
     // okienka
     public static JFrame fr_main;
     public static JFrame fr_dodajPrac;
     public static JFrame fr_usunPracownika;
-    public static JFrame fr_dodajWysylke;
-    public static JFrame fr_dodajPrzychodzoce;
+    public static JFrame fr_dodajEksport;
+    public static JFrame fr_dodajImport;
 
     // elementy fr_main - ogólne
     public JButton btn_prac;
@@ -75,7 +78,6 @@ public class MyPanel extends JPanel {
 
     // elementy fr_main - towary
     public JButton btn_sortujID;
-    public JButton btn_sortujWaga;
     public JButton btn_sortujWlasc;
 
     // elementy fr_main - transport
@@ -91,6 +93,61 @@ public class MyPanel extends JPanel {
     private JLabel lbl_kodAdmin;
     public JTextField txt_login;
 
+    // elementy fr_dodajPrac;
+    private JButton btn_okPracDodaj;
+    private JTextField txt_okPracPoz;
+    private JTextField txt_okPracIm;
+    private JTextField txt_okPracZmi;
+    private JTextField txt_okPracNazw;
+    private JLabel lbl_okPracPoz;
+    private JLabel lbl_okPracIm;
+    private JLabel lbl_okPracNazw;
+    private JLabel lbl_okPracZmi;
+    private JLabel lbl_okPrac;
+    private JLabel lbl_okPracError;
+    private JLabel lbl_okPracWypl;
+    private JTextField txt_okPracWypl;
+
+    // elementy fr_usunPracownika;
+    private JButton btn_okPracUs;
+    private JTextField txt_okPracUsID;
+    private JLabel lbl_okPracUsID;
+    private JLabel lbl_okPracUsIm;
+    private JLabel lbl_okPracUsNazw;
+    private JLabel lbl_okPracUsPoz;
+    private JLabel lbl_okPracUs;
+    private JLabel lbl_okPracUsZm;
+    private JButton btn_okPracUsSpr;
+
+    // elementy fr_dodajImport;
+    private JButton btn_okImpDodaj;
+    private JTextField txt_okImpNazw;
+    private JTextField txt_okImpData;
+    private JTextField txt_okImpTyp;
+    private JTextField txt_okImpWlasc;
+    private JLabel lbl_okImpNazw;
+    private JLabel lbl_okImpData;
+    private JLabel lbl_okImpWlasc;
+    private JLabel lbl_okImpTyp;
+    private JLabel lbl_okImp;
+    private JLabel lbl_okImpError;
+    private JLabel lbl_okImpWaga;
+    private JTextField txt_okImpWaga;
+
+    // elementy fr_dodajEksport;
+    private JButton btn_okEkspDodaj;
+    private JTextField txt_okEkspNazw;
+    private JTextField txt_okEkspData;
+    private JLabel lbl_okEkspNazw;
+    private JLabel lbl_okEkspData;
+    private JLabel lbl_okEkspWlasc;
+    private JLabel lbl_okEkspTyp;
+    private JLabel lbl_okEksp;
+    private JLabel lbl_okEkspWaga;
+    private JButton btn_okEkspSpr;
+    // #endregion
+
+    // #region Pomniejsze zmienne
     private Font czcionkaDefault = new Font("Dialog", Font.PLAIN, 14);
     private Font czcionka = new Font("Dialog", Font.PLAIN, 18);
     private Font czcionkaB = new Font("Dialog", Font.BOLD, 14);
@@ -100,7 +157,9 @@ public class MyPanel extends JPanel {
     private static String sortTow = "ID"; // ID, Wlasc, Waga
     private static etapyLogowania etapLog = etapyLogowania.LOGOWANIE;
     public static final String KOD_ADMIN = "qwe123";
+    // #endregion
 
+    // #region Przetwarzanie danych i tabele
     public static String[][] obiektyNaListyStr(Object[] obiekty, tabele typ) {
         // {"ID", "Nazwisko", "Imie", "Zmiana", "Pozycja", "Wypłata"};
         // {"ID", "Nazwa", "Typ produktu", "Waga [kg]", "Właściciel"};
@@ -171,6 +230,7 @@ public class MyPanel extends JPanel {
     public static Object[] listyStrNaObiekty(String[][] str, tabele typ) {
 
         Object[] obiekty = new Object[str.length]; // ok
+        System.out.println("str.length w listyStrNaObiekty() to: " + str.length);
 
         switch (typ) {
             case PRACOWNICY:
@@ -193,7 +253,7 @@ public class MyPanel extends JPanel {
                 for (int i = 0; i < obiekty.length; i++) {
                     int ID = Integer.valueOf(str[i][0]);
                     Towar towar = new Towar(ID, str[i][1], str[i][2], Integer.valueOf(str[i][3]), str[i][4],
-                            Transport.zwrocStanTowaru(ID));
+                            Transport.zwrocStanTowaru(ID), false);
 
                     obiekty[i] = (Object) towar;
                 }
@@ -206,7 +266,13 @@ public class MyPanel extends JPanel {
                 for (int i = 0; i < obiekty.length; i++) {
                     int ID = Integer.valueOf(str[i][0]);
                     // 03.02.1, 04:05 dd.mm.y hh:minmin
-                    String dataIczas[] = str[i][2].replace(" ", "").split(",");
+                    String dataIczas[];
+
+                    if (str[i][2].contains(","))
+                        dataIczas = str[i][2].replace(" ", "").split(",");
+                    else
+                        dataIczas = str[i][2].split(" ");
+
                     String dmy[] = dataIczas[0].split(".");
                     String hm[] = dataIczas[1].split(":");
                     Transport transport = new Transport(ID, str[i][1], Integer.parseInt(dmy[2]),
@@ -252,10 +318,6 @@ public class MyPanel extends JPanel {
             switch (sortTow) {
                 case "Wlasc":
                     Towar.listaTowarow.sort(Towar.porownajWlasc);
-                    break;
-
-                case "Waga":
-                    Towar.listaTowarow.sort(Towar.porownajWag);
                     break;
 
                 default:
@@ -305,6 +367,7 @@ public class MyPanel extends JPanel {
     public static boolean ZapiszPlik(Object doZapisu, pliki typ) {
         return true;
     }
+    // #endregion
 
     public MyPanel(panele panel) {
 
@@ -428,6 +491,7 @@ public class MyPanel extends JPanel {
                             for (int i = 0; i < obi.length; i++) {
                                 Pracownik.listaPracownikow.set(i, (Pracownik) obi[i]);
                             }
+
                         }
                     }
                 };
@@ -447,8 +511,8 @@ public class MyPanel extends JPanel {
                 // przypisywanie komponentów
                 tbl_tabelaMain = new JTable();
                 lbl_nazwaTabeli = new JLabel("Lista towarów");
-                btn_dodaj = new JButton("Dodaj towar bezpośrednio");
-                btn_usun = new JButton("Usuń towar bezpośrednio");
+                btn_sortujID = new JButton("Sortuj towary po ID");
+                btn_sortujWlasc = new JButton("Sortuj po właścicielach");
                 btn_zapisz = new JButton("Zapisz zmiany");
 
                 // wymiary okna i layout
@@ -458,15 +522,15 @@ public class MyPanel extends JPanel {
                 // dodanie komponentow
                 add(lbl_nazwaTabeli);
                 // tabela dodana poniżej
-                add(btn_dodaj);
+                add(btn_sortujID);
+                add(btn_sortujWlasc);
                 add(btn_zapisz);
-                add(btn_usun);
 
                 // Aboslutna pozycja i rozmiary
 
                 lbl_nazwaTabeli.setBounds(20, 65, 200, 30);
-                btn_dodaj.setBounds(55, 520, 190, 30);
-                btn_usun.setBounds(555, 520, 190, 30);
+                btn_sortujID.setBounds(55, 520, 190, 30);
+                btn_sortujWlasc.setBounds(555, 520, 190, 30);
                 btn_zapisz.setBounds(305, 520, 190, 30);
 
                 // ładowanie i wstępne przypisane danych (test/temp)
@@ -482,11 +546,32 @@ public class MyPanel extends JPanel {
 
                 // Action Listener
                 ActionListener listenMainTow = new ActionListener() {
-                    @Overridedodawanie
+                    @Override
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_dodaj) {
+                        if (event.getSource() == btn_sortujID) {
+
+                            tbl_tabelaMain = new JTable();
+                            sortTow = "ID";
+                            boolean sukcesTab = stworzTabele(tabele.TOWARY);
+
+                            if (!sukcesTab)
+                                System.out.println("Niepowodzenie w 'stworzTabele(tabele.TOWARY)', sortowanie po ID");
+
+                            scr_tabeli = new JScrollPane(tbl_tabelaMain);
+                            revalidate();
                         }
-                        if (event.getSource() == btn_usun) {
+                        if (event.getSource() == btn_sortujWlasc) {
+
+                            tbl_tabelaMain = new JTable();
+                            sortTow = "Wlasc";
+                            boolean sukcesTab = stworzTabele(tabele.TOWARY);
+
+                            if (!sukcesTab)
+                                System.out.println(
+                                        "Niepowodzenie w 'stworzTabele(tabele.TOWARY)', sortowanie po Właścicielach");
+
+                            scr_tabeli = new JScrollPane(tbl_tabelaMain);
+                            revalidate();
                         }
                         if (event.getSource() == btn_zapisz) {
 
@@ -501,16 +586,21 @@ public class MyPanel extends JPanel {
                             }
 
                             Object[] obi = listyStrNaObiekty(numdata, tabele.TOWARY);
+
                             for (int i = 0; i < obi.length; i++) {
-                                Towar.listaTowarow.set(i, (Towar) obi[i]);
+                                Towar.listaTowarow.set(Towar.miejsceWTab(((Towar) obi[i]).ID), (Towar) obi[i]);
                             }
                         }
                     }
                 };
 
-                btn_dodaj.addActionListener(listenMainTow);
-                btn_usun.addActionListener(listenMainTow);
+                btn_sortujID.addActionListener(listenMainTow);
+                btn_sortujWlasc.addActionListener(listenMainTow);
                 btn_zapisz.addActionListener(listenMainTow);
+
+                for (Towar t : Towar.listaTowarow) {
+                    System.out.println(t.toString());
+                }
 
                 break;
 
@@ -582,6 +672,7 @@ public class MyPanel extends JPanel {
                                 Transport.listaTransportow.set(i, (Transport) obi[i]);
                             }
                         }
+                        revalidate();
                     }
                 };
 
@@ -691,8 +782,6 @@ public class MyPanel extends JPanel {
                                 break;
                             case KOD:
                                 if (event.getSource() == btn_loginZatw) {
-                                    System.out.println(
-                                            "Kod admina to: " + KOD_ADMIN + ", podano :" + txt_kodAdmin.getText());
 
                                     if (txt_kodAdmin.getText().compareTo(KOD_ADMIN) == 0) {
                                         etapLog = etapyLogowania.REJESTRACJA;
@@ -863,7 +952,56 @@ public class MyPanel extends JPanel {
 
             case DODAJ_PRAC:
                 System.out.println("Tworzenie okeinka DODAJ_PRAC");
+
+                // construct components
+                btn_okPracDodaj = new JButton("Dodaj pracownika");
+                txt_okPracPoz = new JTextField(5);
+                txt_okPracIm = new JTextField(5);
+                txt_okPracZmi = new JTextField(5);
+                txt_okPracNazw = new JTextField(5);
+                lbl_okPracPoz = new JLabel("Pozycja");
+                lbl_okPracIm = new JLabel("Imię");
+                lbl_okPracNazw = new JLabel("Nazwisko");
+                lbl_okPracZmi = new JLabel("Zmiana");
+                lbl_okPrac = new JLabel("Dodawanie pracownika");
+                lbl_okPracError = new JLabel(
+                        "Tu error?................................................................................");
+                lbl_okPracWypl = new JLabel("Wypłata");
+                txt_okPracWypl = new JTextField(5);
+
+                // adjust size and set layout
                 setPreferredSize(new Dimension(600, 500));
+                setLayout(null);
+
+                // add components
+                add(btn_okPracDodaj);
+                add(txt_okPracPoz);
+                add(txt_okPracIm);
+                add(txt_okPracZmi);
+                add(txt_okPracNazw);
+                add(lbl_okPracPoz);
+                add(lbl_okPracIm);
+                add(lbl_okPracNazw);
+                add(lbl_okPracZmi);
+                add(lbl_okPrac);
+                add(lbl_okPracError);
+                add(lbl_okPracWypl);
+                add(txt_okPracWypl);
+
+                // set component bounds (only needed by Absolute Positioning)
+                btn_okPracDodaj.setBounds(200, 440, 200, 30);
+                txt_okPracPoz.setBounds(50, 120, 500, 25);
+                txt_okPracIm.setBounds(50, 220, 225, 25);
+                txt_okPracZmi.setBounds(50, 320, 225, 25);
+                txt_okPracNazw.setBounds(325, 220, 225, 25);
+                lbl_okPracPoz.setBounds(50, 90, 200, 25);
+                lbl_okPracIm.setBounds(50, 190, 200, 25);
+                lbl_okPracNazw.setBounds(325, 190, 200, 25);
+                lbl_okPracZmi.setBounds(50, 290, 200, 25);
+                lbl_okPrac.setBounds(150, 25, 300, 30);
+                lbl_okPracError.setBounds(150, 375, 300, 30);
+                lbl_okPracWypl.setBounds(325, 290, 200, 25);
+                txt_okPracWypl.setBounds(325, 320, 225, 25);
 
                 ActionListener listenSubDodajPrac = new ActionListener() {
                     @Override
@@ -877,43 +1015,177 @@ public class MyPanel extends JPanel {
 
             case USUN_PRAC:
                 System.out.println("Tworzenie okeinka USUN_PRAC");
+
+                // construct components
+                btn_okPracUs = new JButton("Usuń pracownika");
+                txt_okPracUsID = new JTextField(5);
+                lbl_okPracUsID = new JLabel("ID");
+                lbl_okPracUsIm = new JLabel("Imię : ");
+                lbl_okPracUsNazw = new JLabel("Nazwisko : ");
+                lbl_okPracUsPoz = new JLabel("Pozycja : ");
+                lbl_okPracUs = new JLabel("Usówanie pracownika");
+                lbl_okPracUsZm = new JLabel("Zmiana : ");
+                btn_okPracUsSpr = new JButton("Sprawdź informacje pracownika (ID)");
+
+                // adjust size and set layout
                 setPreferredSize(new Dimension(600, 500));
+                setLayout(null);
+
+                // add components
+                add(btn_okPracUs);
+                add(txt_okPracUsID);
+                add(lbl_okPracUsID);
+                add(lbl_okPracUsIm);
+                add(lbl_okPracUsNazw);
+                add(lbl_okPracUsPoz);
+                add(lbl_okPracUs);
+                add(lbl_okPracUsZm);
+                add(btn_okPracUsSpr);
+
+                // set component bounds (only needed by Absolute Positioning)
+                btn_okPracUs.setBounds(190, 440, 220, 30);
+                txt_okPracUsID.setBounds(70, 110, 100, 25);
+                lbl_okPracUsID.setBounds(70, 85, 30, 25);
+                lbl_okPracUsIm.setBounds(75, 215, 200, 25);
+                lbl_okPracUsNazw.setBounds(75, 265, 200, 25);
+                lbl_okPracUsPoz.setBounds(75, 315, 200, 25);
+                lbl_okPracUs.setBounds(150, 25, 300, 30);
+                lbl_okPracUsZm.setBounds(75, 365, 200, 25);
+                btn_okPracUsSpr.setBounds(275, 105, 250, 30);
 
                 ActionListener listenSubUsunPrac = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        // if (event.getSource() == btn_dodaj) {
-                        // }
+                        if (event.getSource() == btn_okPracUs) {
+                        }
+                        if (event.getSource() == btn_okPracUsSpr) {
+                        }
                     }
                 };
+
+                btn_okPracUs.addActionListener(listenSubUsunPrac);
+                btn_okPracUsSpr.addActionListener(listenSubUsunPrac);
 
                 break;
 
             case DODAJ_TOWAR:
                 System.out.println("Tworzenie okeinka DODAJ_TOWAR");
+
+                // construct components
+                btn_okImpDodaj = new JButton("Dodaj import");
+                txt_okImpNazw = new JTextField(5);
+                txt_okImpData = new JTextField(5);
+                txt_okImpTyp = new JTextField(5);
+                txt_okImpWlasc = new JTextField(5);
+                lbl_okImpNazw = new JLabel("Nazwa");
+                lbl_okImpData = new JLabel("Data (dd.mm.yyyy hh:mm)");
+                lbl_okImpWlasc = new JLabel("Właściciel");
+                lbl_okImpTyp = new JLabel("Kategoria towaru");
+                lbl_okImp = new JLabel("Dodawanie importu towaru");
+                lbl_okImpError = new JLabel(
+                        "Tu error?................................................................................");
+                lbl_okImpWaga = new JLabel("Waga towaru");
+                txt_okImpWaga = new JTextField(5);
+
+                // adjust size and set layout
                 setPreferredSize(new Dimension(600, 500));
+                setLayout(null);
+
+                // add components
+                add(btn_okImpDodaj);
+                add(txt_okImpNazw);
+                add(txt_okImpData);
+                add(txt_okImpTyp);
+                add(txt_okImpWlasc);
+                add(lbl_okImpNazw);
+                add(lbl_okImpData);
+                add(lbl_okImpWlasc);
+                add(lbl_okImpTyp);
+                add(lbl_okImp);
+                add(lbl_okImpError);
+                add(lbl_okImpWaga);
+                add(txt_okImpWaga);
+
+                // set component bounds (only needed by Absolute Positioning)
+                btn_okImpDodaj.setBounds(200, 440, 200, 30);
+                txt_okImpNazw.setBounds(50, 120, 500, 25);
+                txt_okImpData.setBounds(50, 220, 225, 25);
+                txt_okImpTyp.setBounds(50, 320, 225, 25);
+                txt_okImpWlasc.setBounds(325, 220, 225, 25);
+                lbl_okImpNazw.setBounds(50, 90, 200, 25);
+                lbl_okImpData.setBounds(50, 190, 200, 25);
+                lbl_okImpWlasc.setBounds(325, 190, 200, 25);
+                lbl_okImpTyp.setBounds(50, 290, 200, 25);
+                lbl_okImp.setBounds(150, 25, 300, 30);
+                lbl_okImpError.setBounds(150, 375, 300, 30);
+                lbl_okImpWaga.setBounds(325, 290, 200, 25);
+                txt_okImpWaga.setBounds(325, 320, 225, 25);
 
                 ActionListener listenSubDodajTow = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        // if (event.getSource() == btn_prac) {
-                        // }
+                        if (event.getSource() == btn_okImpDodaj) {
+                        }
                     }
                 };
+
+                btn_okImpDodaj.addActionListener(listenSubDodajTow);
 
                 break;
 
             case WYSLIJ_TOWAR:
                 System.out.println("Tworzenie okeinka WYSLIJ_TOWAR");
                 setPreferredSize(new Dimension(600, 500));
+                setLayout(null);
+
+                // construct components
+                btn_okEkspDodaj = new JButton("Dodaj Eksport");
+                txt_okEkspNazw = new JTextField(5);
+                txt_okEkspData = new JTextField(5);
+                lbl_okEkspNazw = new JLabel("ID");
+                lbl_okEkspData = new JLabel("Data (dd.mm.yyyy, hh:mm)");
+                lbl_okEkspWlasc = new JLabel("Właściciel : ");
+                lbl_okEkspTyp = new JLabel("Kategoria towaru : ");
+                lbl_okEksp = new JLabel("Dodawanie Eksportu towaru");
+                lbl_okEkspWaga = new JLabel("Waga towaru : ");
+                btn_okEkspSpr = new JButton("Sprawdź informacje towaru (ID)");
+
+                // add components
+                add(btn_okEkspDodaj);
+                add(txt_okEkspNazw);
+                add(txt_okEkspData);
+                add(lbl_okEkspNazw);
+                add(lbl_okEkspData);
+                add(lbl_okEkspWlasc);
+                add(lbl_okEkspTyp);
+                add(lbl_okEksp);
+                add(lbl_okEkspWaga);
+                add(btn_okEkspSpr);
+
+                // set component bounds (only needed by Absolute Positioning)
+                btn_okEkspDodaj.setBounds(190, 440, 220, 30);
+                txt_okEkspNazw.setBounds(75, 110, 100, 25);
+                txt_okEkspData.setBounds(75, 190, 225, 25);
+                lbl_okEkspNazw.setBounds(75, 80, 30, 25);
+                lbl_okEkspData.setBounds(75, 160, 200, 25);
+                lbl_okEkspWlasc.setBounds(80, 265, 200, 25);
+                lbl_okEkspTyp.setBounds(80, 315, 200, 25);
+                lbl_okEksp.setBounds(150, 25, 300, 30);
+                lbl_okEkspWaga.setBounds(80, 365, 200, 25);
+                btn_okEkspSpr.setBounds(305, 105, 220, 30);
 
                 ActionListener listenSubWyslijTow = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        // if (event.getSource() == btn_prac) {
-                        // }
+                        if (event.getSource() == btn_okEkspDodaj) {
+                        }
+                        if (event.getSource() == btn_okEkspSpr) {
+                        }
                     }
                 };
+
+                btn_okEkspDodaj.addActionListener(listenSubWyslijTow);
+                btn_okEkspSpr.addActionListener(listenSubWyslijTow);
 
                 break;
 
@@ -956,15 +1228,15 @@ public class MyPanel extends JPanel {
 
         new Towar(1, "Cegły", "Materiały budowlane", 2000, "SP-bud z.o.o.", Towar.stanyTowaru.DO_ODBIORU);
         new Towar(2, "Wykałaczki", "Spożywcze", 50, "Jeff", Towar.stanyTowaru.DO_ODBIORU);
-        new Towar(3, "Miedź", "Surowce", 4500, "MiedźoMiedź s.a.", Towar.stanyTowaru.DO_ODBIORU);
+        new Towar(3, "Miedź", "Surowce", 4500, "z-MiedzioMiedź s.a.", Towar.stanyTowaru.DO_ODBIORU);
         new Towar(4, "Karton-gips", "Materiały budowlane", 800, "SP-bud z.o.o.", Towar.stanyTowaru.DO_ODBIORU);
 
-        new Transport(1, "Odbior Cegieł", 2022, 11, 18, 17, 15, Transport.stanyTransportu.IMPORT);
-        new Transport(1, "Wywoz Cegieł", 2023, 11, 18, 17, 15, Transport.stanyTransportu.EKSPORT);
-        new Transport(2, "Odbiór kolekcji wykałaczek", 2024, 3, 8, 15, 12, Transport.stanyTransportu.IMPORT);
-        new Transport(3, "Odbior Miedzi", 2003, 10, 1, 7, 6, Transport.stanyTransportu.IMPORT);
-        new Transport(4, "Odbior Karon Gipsu", 2023, 11, 18, 17, 15, Transport.stanyTransportu.IMPORT);
-        new Transport(4, "Wysyłka Karon Gipsu", 2024, 11, 18, 17, 15, Transport.stanyTransportu.EKSPORT);
+        new Transport(1, "Cegły", 2022, 11, 18, 17, 15, Transport.stanyTransportu.IMPORT);
+        new Transport(1, "Cegły", 2023, 11, 18, 17, 15, Transport.stanyTransportu.EKSPORT);
+        new Transport(2, "Wykałaczki", 2024, 3, 8, 15, 12, Transport.stanyTransportu.IMPORT);
+        new Transport(3, "Miedź", 2003, 10, 1, 7, 6, Transport.stanyTransportu.IMPORT);
+        new Transport(4, "Karton-gips", 2023, 11, 18, 17, 15, Transport.stanyTransportu.IMPORT);
+        new Transport(4, "Karton-gips", 2024, 11, 18, 17, 15, Transport.stanyTransportu.EKSPORT);
 
         // Towar wMag[] = Towar.zwrocMagazyn();
         for (int i = 0; i < Towar.listaTowarow.size(); i++) {
@@ -1014,11 +1286,11 @@ public class MyPanel extends JPanel {
 
         fr_usunPracownika.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
 
-        fr_dodajPrzychodzoce = new JFrame("Logowanie odbioru towaru");
-        fr_dodajPrzychodzoce.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
-        fr_dodajPrzychodzoce.getContentPane().add(new MyPanel(panele.DODAJ_TOWAR));
-        fr_dodajPrzychodzoce.pack();
-        fr_dodajPrzychodzoce.addComponentListener(new ComponentAdapter() {
+        fr_dodajImport = new JFrame("Logowanie odbioru towaru");
+        fr_dodajImport.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
+        fr_dodajImport.getContentPane().add(new MyPanel(panele.DODAJ_TOWAR));
+        fr_dodajImport.pack();
+        fr_dodajImport.addComponentListener(new ComponentAdapter() {
 
             @Override
             public void componentHidden(ComponentEvent e) {
@@ -1027,13 +1299,13 @@ public class MyPanel extends JPanel {
             }
         });
 
-        fr_dodajPrzychodzoce.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
+        fr_dodajImport.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
 
-        fr_dodajWysylke = new JFrame("Planowanie wysyłki towaru");
-        fr_dodajWysylke.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
-        fr_dodajWysylke.getContentPane().add(new MyPanel(panele.WYSLIJ_TOWAR));
-        fr_dodajWysylke.pack();
-        fr_dodajWysylke.addComponentListener(new ComponentAdapter() {
+        fr_dodajEksport = new JFrame("Planowanie wysyłki towaru");
+        fr_dodajEksport.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
+        fr_dodajEksport.getContentPane().add(new MyPanel(panele.WYSLIJ_TOWAR));
+        fr_dodajEksport.pack();
+        fr_dodajEksport.addComponentListener(new ComponentAdapter() {
 
             @Override
             public void componentHidden(ComponentEvent e) {
@@ -1042,7 +1314,7 @@ public class MyPanel extends JPanel {
             }
         });
 
-        fr_dodajWysylke.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
+        fr_dodajEksport.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
 
         System.out.println("\n\nKoniec main\n\n");
     }
