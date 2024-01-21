@@ -94,14 +94,6 @@ public class DaneLogowania implements Comparable<DaneLogowania> {
       return kolator.compare(this.ID, dl.ID);
    }
 
-   public static String testListaDL() {
-      String s = "";
-      for (int i = 0; i < listaDanychLog.size(); i++) {
-         s += listaDanychLog.get(i);
-      }
-      return s;
-   }
-
    @Override
    public String toString() {
       return ("\t Login: " + this.login + "\n\tHasło: " + this.haslo + "\n");

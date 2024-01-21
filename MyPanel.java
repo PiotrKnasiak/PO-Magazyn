@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import ProjektMagazyn.Towar.stanyTowaru;
 import ProjektMagazyn.Transport.stanyTransportu;
@@ -77,8 +78,6 @@ public class MyPanel extends JPanel {
     // elementy fr_main - pracownicy
 
     // elementy fr_main - towary
-    public JButton btn_sortujID;
-    public JButton btn_sortujWlasc;
 
     // elementy fr_main - transport
 
@@ -118,6 +117,12 @@ public class MyPanel extends JPanel {
     private JLabel lbl_okPracUs;
     private JLabel lbl_okPracUsZm;
     private JButton btn_okPracUsSpr;
+    String[] defaultPracUsLbl = {
+            "Imię : ",
+            "Nazwisko : ",
+            "Pozycja : ",
+            "Zmiana : ",
+    };
 
     // elementy fr_dodajImport;
     private JButton btn_okImpDodaj;
@@ -136,15 +141,22 @@ public class MyPanel extends JPanel {
 
     // elementy fr_dodajEksport;
     private JButton btn_okEkspDodaj;
-    private JTextField txt_okEkspNazw;
+    private JTextField txt_okEkspID;
     private JTextField txt_okEkspData;
-    private JLabel lbl_okEkspNazw;
+    private JLabel lbl_okEkspID;
     private JLabel lbl_okEkspData;
+    private JLabel lbl_okEkspNazwa;
     private JLabel lbl_okEkspWlasc;
     private JLabel lbl_okEkspTyp;
     private JLabel lbl_okEksp;
     private JLabel lbl_okEkspWaga;
     private JButton btn_okEkspSpr;
+    String[] defaultEkspLbl = {
+            "Nazwa towaru : ",
+            "Właściciel : ",
+            "Rodzaj to waru : ",
+            "Waga towaru : ",
+    };
     // #endregion
 
     // #region Pomniejsze zmienne
@@ -157,6 +169,7 @@ public class MyPanel extends JPanel {
     private static String sortTow = "ID"; // ID, Wlasc, Waga
     private static etapyLogowania etapLog = etapyLogowania.LOGOWANIE;
     public static final String KOD_ADMIN = "qwe123";
+    public static int IDprac, idTow;
     // #endregion
 
     // #region Przetwarzanie danych i tabele
@@ -229,8 +242,7 @@ public class MyPanel extends JPanel {
 
     public static Object[] listyStrNaObiekty(String[][] str, tabele typ) {
 
-        Object[] obiekty = new Object[str.length]; // ok
-        System.out.println("str.length w listyStrNaObiekty() to: " + str.length);
+        Object[] obiekty = new Object[str.length]; // okF
 
         switch (typ) {
             case PRACOWNICY:
@@ -273,7 +285,7 @@ public class MyPanel extends JPanel {
                     else
                         dataIczas = str[i][2].split(" ");
 
-                    String dmy[] = dataIczas[0].split(".");
+                    String dmy[] = dataIczas[0].split("\\.");
                     String hm[] = dataIczas[1].split(":");
                     Transport transport = new Transport(ID, str[i][1], Integer.parseInt(dmy[2]),
                             Integer.parseInt(dmy[1]), Integer.parseInt(dmy[0]), Integer.parseInt(hm[0]),
@@ -356,6 +368,14 @@ public class MyPanel extends JPanel {
             tbl_tabelaMain.setBounds(20, 100, 760, 390);
             return false;
         }
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tbl_tabelaMain.getModel());
+        tbl_tabelaMain.setRowSorter(sorter);
+
+        ArrayList<RowSorter.SortKey> sortKeys = new ArrayList<>(25);
+        // sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
 
         return true;
     }
@@ -511,8 +531,6 @@ public class MyPanel extends JPanel {
                 // przypisywanie komponentów
                 tbl_tabelaMain = new JTable();
                 lbl_nazwaTabeli = new JLabel("Lista towarów");
-                btn_sortujID = new JButton("Sortuj towary po ID");
-                btn_sortujWlasc = new JButton("Sortuj po właścicielach");
                 btn_zapisz = new JButton("Zapisz zmiany");
 
                 // wymiary okna i layout
@@ -522,15 +540,11 @@ public class MyPanel extends JPanel {
                 // dodanie komponentow
                 add(lbl_nazwaTabeli);
                 // tabela dodana poniżej
-                add(btn_sortujID);
-                add(btn_sortujWlasc);
                 add(btn_zapisz);
 
                 // Aboslutna pozycja i rozmiary
 
                 lbl_nazwaTabeli.setBounds(20, 65, 200, 30);
-                btn_sortujID.setBounds(55, 520, 190, 30);
-                btn_sortujWlasc.setBounds(555, 520, 190, 30);
                 btn_zapisz.setBounds(305, 520, 190, 30);
 
                 // ładowanie i wstępne przypisane danych (test/temp)
@@ -548,31 +562,6 @@ public class MyPanel extends JPanel {
                 ActionListener listenMainTow = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        if (event.getSource() == btn_sortujID) {
-
-                            tbl_tabelaMain = new JTable();
-                            sortTow = "ID";
-                            boolean sukcesTab = stworzTabele(tabele.TOWARY);
-
-                            if (!sukcesTab)
-                                System.out.println("Niepowodzenie w 'stworzTabele(tabele.TOWARY)', sortowanie po ID");
-
-                            scr_tabeli = new JScrollPane(tbl_tabelaMain);
-                            revalidate();
-                        }
-                        if (event.getSource() == btn_sortujWlasc) {
-
-                            tbl_tabelaMain = new JTable();
-                            sortTow = "Wlasc";
-                            boolean sukcesTab = stworzTabele(tabele.TOWARY);
-
-                            if (!sukcesTab)
-                                System.out.println(
-                                        "Niepowodzenie w 'stworzTabele(tabele.TOWARY)', sortowanie po Właścicielach");
-
-                            scr_tabeli = new JScrollPane(tbl_tabelaMain);
-                            revalidate();
-                        }
                         if (event.getSource() == btn_zapisz) {
 
                             TableModel model = tbl_tabelaMain.getModel();
@@ -591,16 +580,11 @@ public class MyPanel extends JPanel {
                                 Towar.listaTowarow.set(Towar.miejsceWTab(((Towar) obi[i]).ID), (Towar) obi[i]);
                             }
                         }
+                        revalidate();
                     }
                 };
 
-                btn_sortujID.addActionListener(listenMainTow);
-                btn_sortujWlasc.addActionListener(listenMainTow);
                 btn_zapisz.addActionListener(listenMainTow);
-
-                for (Towar t : Towar.listaTowarow) {
-                    System.out.println(t.toString());
-                }
 
                 break;
 
@@ -652,8 +636,10 @@ public class MyPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent event) {
                         if (event.getSource() == btn_dodaj) {
+                            fr_dodajImport.setVisible(true);
                         }
                         if (event.getSource() == btn_usun) {
+                            fr_dodajEksport.setVisible(true);
                         }
                         if (event.getSource() == btn_zapisz) {
 
@@ -675,6 +661,10 @@ public class MyPanel extends JPanel {
                         revalidate();
                     }
                 };
+
+                btn_dodaj.addActionListener(listenMainTrans);
+                btn_usun.addActionListener(listenMainTrans);
+                btn_zapisz.addActionListener(listenMainTrans);
 
                 break;
 
@@ -739,8 +729,6 @@ public class MyPanel extends JPanel {
                         switch (etapLog) {
                             case LOGOWANIE:
                                 if (event.getSource() == btn_loginZatw) {
-                                    System.out.println("Lista użytkowników: \n" + DaneLogowania.testListaDL());
-
                                     int poprawnie = DaneLogowania.sprawdzLogwanie(txt_login.getText(),
                                             txt_haslo.getText());
                                     if (poprawnie == SUKCES) {
@@ -753,8 +741,6 @@ public class MyPanel extends JPanel {
                                         txt_login.setText("");
                                         txt_haslo.setText("");
                                     } else {
-                                        System.out.println(
-                                                "You stupid! " + txt_login.getText() + " " + txt_haslo.getText());
                                         lbl_logRej.setForeground(new Color(204, 0, 0));
                                         lbl_logRej.setText("Błędny login lub hasło");
                                         txt_haslo.setText("");
@@ -963,9 +949,8 @@ public class MyPanel extends JPanel {
                 lbl_okPracIm = new JLabel("Imię");
                 lbl_okPracNazw = new JLabel("Nazwisko");
                 lbl_okPracZmi = new JLabel("Zmiana");
-                lbl_okPrac = new JLabel("Dodawanie pracownika");
-                lbl_okPracError = new JLabel(
-                        "Tu error?................................................................................");
+                lbl_okPrac = new JLabel("Dodawanie pracownika", SwingConstants.CENTER);
+                // lbl_okPracError = new JLabel("Tu error?", SwingConstants.CENTER);
                 lbl_okPracWypl = new JLabel("Wypłata");
                 txt_okPracWypl = new JTextField(5);
 
@@ -984,7 +969,7 @@ public class MyPanel extends JPanel {
                 add(lbl_okPracNazw);
                 add(lbl_okPracZmi);
                 add(lbl_okPrac);
-                add(lbl_okPracError);
+                // add(lbl_okPracError);
                 add(lbl_okPracWypl);
                 add(txt_okPracWypl);
 
@@ -999,17 +984,46 @@ public class MyPanel extends JPanel {
                 lbl_okPracNazw.setBounds(325, 190, 200, 25);
                 lbl_okPracZmi.setBounds(50, 290, 200, 25);
                 lbl_okPrac.setBounds(150, 25, 300, 30);
-                lbl_okPracError.setBounds(150, 375, 300, 30);
+                // lbl_okPracError.setBounds(150, 375, 300, 30);
                 lbl_okPracWypl.setBounds(325, 290, 200, 25);
                 txt_okPracWypl.setBounds(325, 320, 225, 25);
 
                 ActionListener listenSubDodajPrac = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
-                        // if (event.getSource() == btn_dodaj) {
-                        // }
+                        if (event.getSource() == btn_okPracDodaj) {
+                            try {
+                                Pracownik.listaPracownikow.sort(Pracownik.porownajID);
+
+                                int ID = 1;
+                                if (Pracownik.listaPracownikow.size() > 0)
+                                    ID = Pracownik.listaPracownikow.get(Pracownik.listaPracownikow.size() - 1).ID;
+                                if (ID < 0) {
+                                    ID = 1;
+                                }
+
+                                new Pracownik(ID + 1, txt_okPracZmi.getText(), txt_okPracIm.getText(),
+                                        txt_okPracNazw.getText(), txt_okPracPoz.getText(), txt_okPracWypl.getText());
+
+                                fr_dodajPrac.setVisible(false);
+
+                            } catch (Throwable thr) {
+                                System.out.println("\n*** Error!\n\tNie udało się stworzyć nowego pracownika!\n");
+
+                                txt_okPracPoz.setText("");
+                                txt_okPracIm.setText("");
+                                txt_okPracNazw.setText("");
+                                txt_okPracZmi.setText("");
+                                txt_okPracWypl.setText("");
+
+                                return;
+                            }
+                        }
+
                     }
                 };
+
+                btn_okPracDodaj.addActionListener(listenSubDodajPrac);
 
                 break;
 
@@ -1020,11 +1034,11 @@ public class MyPanel extends JPanel {
                 btn_okPracUs = new JButton("Usuń pracownika");
                 txt_okPracUsID = new JTextField(5);
                 lbl_okPracUsID = new JLabel("ID");
-                lbl_okPracUsIm = new JLabel("Imię : ");
-                lbl_okPracUsNazw = new JLabel("Nazwisko : ");
-                lbl_okPracUsPoz = new JLabel("Pozycja : ");
-                lbl_okPracUs = new JLabel("Usówanie pracownika");
-                lbl_okPracUsZm = new JLabel("Zmiana : ");
+                lbl_okPracUsIm = new JLabel(defaultPracUsLbl[0]);
+                lbl_okPracUsNazw = new JLabel(defaultPracUsLbl[1]);
+                lbl_okPracUsPoz = new JLabel(defaultPracUsLbl[2]);
+                lbl_okPracUs = new JLabel("Usówanie pracownika", SwingConstants.CENTER);
+                lbl_okPracUsZm = new JLabel(defaultPracUsLbl[3]);
                 btn_okPracUsSpr = new JButton("Sprawdź informacje pracownika (ID)");
 
                 // adjust size and set layout
@@ -1046,11 +1060,11 @@ public class MyPanel extends JPanel {
                 btn_okPracUs.setBounds(190, 440, 220, 30);
                 txt_okPracUsID.setBounds(70, 110, 100, 25);
                 lbl_okPracUsID.setBounds(70, 85, 30, 25);
-                lbl_okPracUsIm.setBounds(75, 215, 200, 25);
-                lbl_okPracUsNazw.setBounds(75, 265, 200, 25);
-                lbl_okPracUsPoz.setBounds(75, 315, 200, 25);
+                lbl_okPracUsIm.setBounds(75, 215, 400, 25);
+                lbl_okPracUsNazw.setBounds(75, 265, 400, 25);
+                lbl_okPracUsPoz.setBounds(75, 315, 400, 25);
                 lbl_okPracUs.setBounds(150, 25, 300, 30);
-                lbl_okPracUsZm.setBounds(75, 365, 200, 25);
+                lbl_okPracUsZm.setBounds(75, 365, 400, 25);
                 btn_okPracUsSpr.setBounds(275, 105, 250, 30);
 
                 ActionListener listenSubUsunPrac = new ActionListener() {
@@ -1059,6 +1073,28 @@ public class MyPanel extends JPanel {
                         if (event.getSource() == btn_okPracUs) {
                         }
                         if (event.getSource() == btn_okPracUsSpr) {
+                            try {
+                                IDprac = Integer.valueOf(txt_okPracUsID.getText());
+                            } catch (Throwable thr) {
+                                System.out.println("Nie można zparsować txt_okPracUsID.getText()");
+                                return;
+                            }
+
+                            Pracownik sprawdzany = Pracownik.znajdzPoID(IDprac, true);
+
+                            if (sprawdzany == null) {
+                                lbl_okPracUsIm.setText(defaultPracUsLbl[0] + "Nie ma takiego pracownika");
+                                lbl_okPracUsNazw.setText(defaultPracUsLbl[1] + "Nie ma takiego pracownika");
+                                lbl_okPracUsPoz.setText(defaultPracUsLbl[2] + "Nie ma takiego pracownika");
+                                lbl_okPracUsZm.setText(defaultPracUsLbl[3] + "Nie ma takiego pracownika");
+                                return;
+                            }
+
+                            lbl_okPracUsIm.setText(defaultPracUsLbl[0] + sprawdzany.imie);
+                            lbl_okPracUsNazw.setText(defaultPracUsLbl[1] + sprawdzany.nazwisko);
+                            lbl_okPracUsPoz.setText(defaultPracUsLbl[2] + sprawdzany.pozycja);
+                            lbl_okPracUsZm.setText(defaultPracUsLbl[3] + sprawdzany.zmiana);
+
                         }
                     }
                 };
@@ -1081,7 +1117,7 @@ public class MyPanel extends JPanel {
                 lbl_okImpData = new JLabel("Data (dd.mm.yyyy hh:mm)");
                 lbl_okImpWlasc = new JLabel("Właściciel");
                 lbl_okImpTyp = new JLabel("Kategoria towaru");
-                lbl_okImp = new JLabel("Dodawanie importu towaru");
+                lbl_okImp = new JLabel("Dodawanie importu towaru", SwingConstants.CENTER);
                 lbl_okImpError = new JLabel(
                         "Tu error?................................................................................");
                 lbl_okImpWaga = new JLabel("Waga towaru");
@@ -1125,6 +1161,61 @@ public class MyPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent event) {
                         if (event.getSource() == btn_okImpDodaj) {
+
+                            try {
+                                Towar.listaTowarow.sort(Towar.porownajID);
+
+                                int ID = 1, ileTow = Towar.listaTowarow.size();
+
+                                if (ileTow > 0)
+                                    ID = Towar.listaTowarow.get(ileTow - 1).ID;
+                                if (ID < 0) {
+                                    ID = 1;
+                                }
+
+                                ID++;
+
+                                Towar nowy = new Towar(ID, txt_okImpNazw.getText(), txt_okImpTyp.getText(),
+                                        Integer.valueOf(txt_okImpWaga.getText()), txt_okImpWlasc.getText(),
+                                        Towar.stanyTowaru.DO_ODBIORU);
+
+                                String dataIczas[];
+
+                                if (txt_okImpData.getText().contains(","))
+                                    dataIczas = txt_okImpData.getText().replace(" ", "").split(",");
+                                else
+                                    dataIczas = txt_okImpData.getText().split(" ");
+
+                                String dmy[] = dataIczas[0].split("\\.");
+                                String hm[] = dataIczas[1].split(":");
+
+                                new Transport(ID, txt_okImpNazw.getText(),
+                                        Integer.parseInt(dmy[2]), Integer.parseInt(dmy[1]), Integer.parseInt(dmy[0]),
+                                        Integer.parseInt(hm[0]), Integer.parseInt(hm[1]),
+                                        Transport.stanyTransportu.IMPORT);
+
+                                Transport ost = Transport.listaTransportow.get(Transport.listaTransportow.size() - 1);
+                                System.out.println("Nazwa ostatniego transportu : " + ost.nazwaTowaru
+                                        + ", ID transportu : " + ost.ID);
+
+                                nowy.stanTowaru = Transport.zwrocStanTowaru(ID);
+                                Towar.listaTowarow.set(ileTow, nowy);
+
+                                fr_dodajImport.setVisible(false);
+
+                            } catch (Throwable thr) {
+                                System.out.println(
+                                        "\n*** Error!\n\tNie udało się stworzyć nowego Towaru i Transportu!\n" +
+                                                thr.getMessage());
+
+                                txt_okImpNazw.setText("");
+                                txt_okImpTyp.setText("");
+                                txt_okImpWaga.setText("");
+                                txt_okImpWlasc.setText("");
+                                txt_okImpData.setText("");
+
+                                return;
+                            }
                         }
                     }
                 };
@@ -1140,22 +1231,24 @@ public class MyPanel extends JPanel {
 
                 // construct components
                 btn_okEkspDodaj = new JButton("Dodaj Eksport");
-                txt_okEkspNazw = new JTextField(5);
+                txt_okEkspID = new JTextField(5);
                 txt_okEkspData = new JTextField(5);
-                lbl_okEkspNazw = new JLabel("ID");
+                lbl_okEkspID = new JLabel("ID");
                 lbl_okEkspData = new JLabel("Data (dd.mm.yyyy, hh:mm)");
-                lbl_okEkspWlasc = new JLabel("Właściciel : ");
-                lbl_okEkspTyp = new JLabel("Kategoria towaru : ");
-                lbl_okEksp = new JLabel("Dodawanie Eksportu towaru");
-                lbl_okEkspWaga = new JLabel("Waga towaru : ");
+                lbl_okEkspNazwa = new JLabel(defaultEkspLbl[0]);
+                lbl_okEkspWlasc = new JLabel(defaultEkspLbl[1]);
+                lbl_okEkspTyp = new JLabel(defaultEkspLbl[2]);
+                lbl_okEksp = new JLabel("Dodawanie Eksportu towaru", SwingConstants.CENTER);
+                lbl_okEkspWaga = new JLabel(defaultEkspLbl[3]);
                 btn_okEkspSpr = new JButton("Sprawdź informacje towaru (ID)");
 
                 // add components
                 add(btn_okEkspDodaj);
-                add(txt_okEkspNazw);
+                add(txt_okEkspID);
                 add(txt_okEkspData);
-                add(lbl_okEkspNazw);
+                add(lbl_okEkspID);
                 add(lbl_okEkspData);
+                add(lbl_okEkspNazwa);
                 add(lbl_okEkspWlasc);
                 add(lbl_okEkspTyp);
                 add(lbl_okEksp);
@@ -1163,16 +1256,17 @@ public class MyPanel extends JPanel {
                 add(btn_okEkspSpr);
 
                 // set component bounds (only needed by Absolute Positioning)
-                btn_okEkspDodaj.setBounds(190, 440, 220, 30);
-                txt_okEkspNazw.setBounds(75, 110, 100, 25);
-                txt_okEkspData.setBounds(75, 190, 225, 25);
-                lbl_okEkspNazw.setBounds(75, 80, 30, 25);
-                lbl_okEkspData.setBounds(75, 160, 200, 25);
-                lbl_okEkspWlasc.setBounds(80, 265, 200, 25);
-                lbl_okEkspTyp.setBounds(80, 315, 200, 25);
                 lbl_okEksp.setBounds(150, 25, 300, 30);
-                lbl_okEkspWaga.setBounds(80, 365, 200, 25);
+                lbl_okEkspID.setBounds(75, 80, 30, 25);
+                txt_okEkspID.setBounds(75, 110, 100, 25);
                 btn_okEkspSpr.setBounds(305, 105, 220, 30);
+                lbl_okEkspData.setBounds(75, 160, 200, 25);
+                txt_okEkspData.setBounds(75, 190, 225, 25);
+                lbl_okEkspNazwa.setBounds(80, 235, 400, 25);
+                lbl_okEkspWlasc.setBounds(80, 285, 400, 25);
+                lbl_okEkspTyp.setBounds(80, 335, 400, 25);
+                lbl_okEkspWaga.setBounds(80, 385, 400, 25);
+                btn_okEkspDodaj.setBounds(190, 440, 220, 30);
 
                 ActionListener listenSubWyslijTow = new ActionListener() {
                     @Override
@@ -1180,6 +1274,28 @@ public class MyPanel extends JPanel {
                         if (event.getSource() == btn_okEkspDodaj) {
                         }
                         if (event.getSource() == btn_okEkspSpr) {
+                            try {
+                                IDprac = Integer.valueOf(txt_okEkspID.getText());
+                            } catch (Throwable thr) {
+                                System.out.println("Nie można zparsować txt_okEkspID.getText()");
+                                return;
+                            }
+
+                            Towar sprawdzany = Towar.znajdzPoID(IDprac, true);
+
+                            if (sprawdzany == null) {
+                                lbl_okEkspNazwa.setText(defaultEkspLbl[0] + "Nie ma takiego towaru");
+                                lbl_okEkspWlasc.setText(defaultEkspLbl[1] + "Nie ma takiego towaru");
+                                lbl_okEkspTyp.setText(defaultEkspLbl[2] + "Nie ma takiego towaru");
+                                lbl_okEkspWaga.setText(defaultEkspLbl[3] + "Nie ma takiego towaru");
+                                return;
+                            }
+
+                            lbl_okEkspNazwa.setText(defaultEkspLbl[0] + sprawdzany.nazwa);
+                            lbl_okEkspWlasc.setText(defaultEkspLbl[1] + sprawdzany.wlasciciel);
+                            lbl_okEkspTyp.setText(defaultEkspLbl[2] + sprawdzany.typ);
+                            lbl_okEkspWaga.setText(defaultEkspLbl[3] + sprawdzany.wagaKG);
+
                         }
                     }
                 };
@@ -1206,7 +1322,7 @@ public class MyPanel extends JPanel {
 
             if (!zalogowany) {
                 lbl_zalogojSie.setVisible(true);
-                System.out.println("Niezalogowany! (stoopid)");
+                System.out.println("Niezalogowany!");
                 setPreferredSize(new Dimension(800, 600));
                 setLayout(null);
 
@@ -1253,16 +1369,6 @@ public class MyPanel extends JPanel {
         fr_main.getContentPane().add(panelLog);
         fr_main.pack();
         fr_main.setVisible(true);
-        fr_main.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                System.out.println("Replace sysout with your method call");
-                ((JFrame) (e.getComponent())).dispose();
-            }
-        });
-
-        // System.out.println(sty.length);
-        // System.out.println(panelLog.txt_login.getFont().toString());
 
         fr_dodajPrac = new JFrame("Dodawanie pracownika");
         fr_dodajPrac.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
@@ -1275,14 +1381,6 @@ public class MyPanel extends JPanel {
         fr_usunPracownika.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
         fr_usunPracownika.getContentPane().add(new MyPanel(panele.USUN_PRAC));
         fr_usunPracownika.pack();
-        fr_usunPracownika.addComponentListener(new ComponentAdapter() {
-
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                System.out.println("Replace sysout with your method call");
-                ((JFrame) (e.getComponent())).dispose();
-            }
-        });
 
         fr_usunPracownika.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
 
@@ -1290,14 +1388,6 @@ public class MyPanel extends JPanel {
         fr_dodajImport.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
         fr_dodajImport.getContentPane().add(new MyPanel(panele.DODAJ_TOWAR));
         fr_dodajImport.pack();
-        fr_dodajImport.addComponentListener(new ComponentAdapter() {
-
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                System.out.println("Replace sysout with your method call");
-                ((JFrame) (e.getComponent())).dispose();
-            }
-        });
 
         fr_dodajImport.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
 
@@ -1305,17 +1395,9 @@ public class MyPanel extends JPanel {
         fr_dodajEksport.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // zamknij tylko to
         fr_dodajEksport.getContentPane().add(new MyPanel(panele.WYSLIJ_TOWAR));
         fr_dodajEksport.pack();
-        fr_dodajEksport.addComponentListener(new ComponentAdapter() {
-
-            @Override
-            public void componentHidden(ComponentEvent e) {
-                System.out.println("Replace sysout with your method call");
-                ((JFrame) (e.getComponent())).dispose();
-            }
-        });
 
         fr_dodajEksport.setVisible(false); // czy rozpocząć proces, nie tylko czy pokazać
 
-        System.out.println("\n\nKoniec main\n\n");
+        // System.out.println("\n\nKoniec main\n\n");
     }
 }

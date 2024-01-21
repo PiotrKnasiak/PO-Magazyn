@@ -47,6 +47,26 @@ public class Pracownik extends Osoba implements Comparable<Pracownik> {
     // klasowa (statyczna) lista pracowników
     static List<Pracownik> listaPracownikow = new ArrayList<>();
 
+    public static Pracownik znajdzPoID(int ID, boolean alert) {
+        Pracownik sprawdzany = null;
+
+        for (int i = 0; i < Pracownik.listaPracownikow.size(); i++) {
+            if (Pracownik.listaPracownikow.get(i).ID == ID) {
+                return Pracownik.listaPracownikow.get(i);
+            }
+        }
+
+        if (sprawdzany == null) {
+            if (alert) {
+                System.out.println(
+                        "\n*** Error!\n\tNiepowodzenie w Pracownik.znajdzPoID(" + ID
+                                + ", true)!\n\t  Nie ma takiego pracownika");
+            }
+        }
+
+        return sprawdzany;
+    }
+
     public static void drukujPracownikow() {
         String studenci = "";
         for (Pracownik s : listaPracownikow) {
@@ -65,10 +85,6 @@ public class Pracownik extends Osoba implements Comparable<Pracownik> {
         for (int i = 0; i < len; i++) {
             Pracownik.listaPracownikow.remove(0);
         }
-    }
-
-    public static void sortuj() {
-        listaPracownikow.sort(komparator);
     }
 
     public static boolean zmianaImienia(String noweIm, int index) {
