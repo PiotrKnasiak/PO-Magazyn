@@ -110,7 +110,6 @@ public class MyPanel extends JPanel {
     private JLabel lbl_okPracNazw;
     private JLabel lbl_okPracZmi;
     private JLabel lbl_okPrac;
-    private JLabel lbl_okPracError;
     private JLabel lbl_okPracWypl;
     private JTextField txt_okPracWypl;
 
@@ -142,7 +141,6 @@ public class MyPanel extends JPanel {
     private JLabel lbl_okImpWlasc;
     private JLabel lbl_okImpTyp;
     private JLabel lbl_okImp;
-    private JLabel lbl_okImpError;
     private JLabel lbl_okImpWaga;
     private JTextField txt_okImpWaga;
 
@@ -1291,8 +1289,6 @@ public class MyPanel extends JPanel {
                 lbl_okImpWlasc = new JLabel("Właściciel");
                 lbl_okImpTyp = new JLabel("Kategoria towaru");
                 lbl_okImp = new JLabel("Dodawanie importu towaru", SwingConstants.CENTER);
-                lbl_okImpError = new JLabel(
-                        "Tu error?................................................................................");
                 lbl_okImpWaga = new JLabel("Waga towaru");
                 txt_okImpWaga = new JTextField(5);
 
@@ -1311,7 +1307,6 @@ public class MyPanel extends JPanel {
                 add(lbl_okImpWlasc);
                 add(lbl_okImpTyp);
                 add(lbl_okImp);
-                add(lbl_okImpError);
                 add(lbl_okImpWaga);
                 add(txt_okImpWaga);
 
@@ -1326,7 +1321,6 @@ public class MyPanel extends JPanel {
                 lbl_okImpWlasc.setBounds(325, 190, 200, 25);
                 lbl_okImpTyp.setBounds(50, 290, 200, 25);
                 lbl_okImp.setBounds(150, 25, 300, 30);
-                lbl_okImpError.setBounds(150, 375, 300, 30);
                 lbl_okImpWaga.setBounds(325, 290, 200, 25);
                 txt_okImpWaga.setBounds(325, 320, 225, 25);
 
