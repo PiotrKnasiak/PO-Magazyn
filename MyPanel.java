@@ -2,6 +2,13 @@ package ProjektMagazyn;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -380,12 +387,141 @@ public class MyPanel extends JPanel {
         return true;
     }
 
-    public static Object WczytajPlik(String sciezka, pliki typ) {
-        return new Object();
+    public static boolean WczytajPlik(pliki typ) {
+
+        FileInputStream fi = null;
+        ObjectInputStream oi = null;
+
+        try {
+            switch (typ) {
+                case LISTA_PRACOWNIKOW:
+                    fi = new FileInputStream(new File(".\\Zapisane\\Pracownicy.txt"));
+                    oi = new ObjectInputStream(fi);
+
+                    Pracownik.listaPracownikow.clear();
+
+                    while (true)
+                        Pracownik.listaPracownikow.add((Pracownik) oi.readObject());
+
+                case LISTA_TOWAROW:
+                    fi = new FileInputStream(new File(".\\Zapisane\\Towary.txt"));
+                    oi = new ObjectInputStream(fi);
+
+                    Towar.listaTowarow.clear();
+
+                    while (true)
+                        Towar.listaTowarow.add((Towar) oi.readObject());
+
+                case LISTA_TRANSPORTOW:
+
+                    fi = new FileInputStream(new File(".\\Zapisane\\Transporty.txt"));
+                    oi = new ObjectInputStream(fi);
+
+                    Transport.listaTransportow.clear();
+
+                    while (true)
+                        Transport.listaTransportow.add((Transport) oi.readObject());
+
+                case DANE_LOGOWANIA:
+
+                    fi = new FileInputStream(new File(".\\Zapisane\\DaneLog.txt"));
+                    oi = new ObjectInputStream(fi);
+
+                    DaneLogowania.listaDanychLog.clear();
+
+                    while (true)
+                        DaneLogowania.listaDanychLog.add((DaneLogowania) oi.readObject());
+
+            }
+
+            // System.out.println(pr1.toString());
+            // System.out.println(pr2.toString());
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        } catch (IOException e) {
+            try {
+                fi.close();
+                oi.close();
+            } catch (IOException eu) {
+            }
+
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
-    public static boolean ZapiszPlik(Object doZapisu, pliki typ) {
-        return true;
+    public static boolean ZapiszPlik(pliki typ) {
+
+        FileOutputStream f = null;
+        ObjectOutputStream o = null;
+
+        try {
+            switch (typ) {
+                case LISTA_PRACOWNIKOW:
+                    f = new FileOutputStream(new File(".\\Zapisane\\Pracownicy.txt"));
+                    o = new ObjectOutputStream(f);
+
+                    // Write objects to file
+                    for (Pracownik pr : Pracownik.listaPracownikow) {
+                        o.writeObject(pr);
+                        // System.out.println(pr.toString());
+                    }
+                    break;
+
+                case LISTA_TOWAROW:
+                    f = new FileOutputStream(new File(".\\Zapisane\\Towary.txt"));
+                    o = new ObjectOutputStream(f);
+
+                    // Write objects to file
+                    for (Towar t : Towar.listaTowarow) {
+                        o.writeObject(t);
+                        // System.out.println(t.toString());
+                    }
+                    break;
+
+                case LISTA_TRANSPORTOW:
+                    f = new FileOutputStream(new File(".\\Zapisane\\Transporty.txt"));
+                    o = new ObjectOutputStream(f);
+
+                    // Write objects to file
+                    for (Transport tr : Transport.listaTransportow) {
+                        o.writeObject(tr);
+                        // System.out.println(tr.toString());
+                    }
+                    break;
+
+                case DANE_LOGOWANIA:
+                    f = new FileOutputStream(new File(".\\Zapisane\\DaneLog.txt"));
+                    o = new ObjectOutputStream(f);
+
+                    // Write objects to file
+                    for (DaneLogowania DL : DaneLogowania.listaDanychLog) {
+                        o.writeObject(DL);
+                        // System.out.println(DL.toString());
+                    }
+                    break;
+
+            }
+
+            o.close();
+            f.close();
+            return true;
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found, " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error initializing stream, " + e.getMessage());
+            try {
+                f.close();
+                o.close();
+            } catch (IOException eu) {
+            }
+        }
+        return false;
     }
     // #endregion
 
@@ -512,6 +648,8 @@ public class MyPanel extends JPanel {
                                 Pracownik.listaPracownikow.set(i, (Pracownik) obi[i]);
                             }
 
+                            ZapiszPlik(pliki.LISTA_PRACOWNIKOW);
+
                         }
                     }
                 };
@@ -579,6 +717,8 @@ public class MyPanel extends JPanel {
                             for (int i = 0; i < obi.length; i++) {
                                 Towar.listaTowarow.set(Towar.miejsceWTab(((Towar) obi[i]).ID), (Towar) obi[i]);
                             }
+
+                            ZapiszPlik(pliki.LISTA_TOWAROW);
                         }
                         revalidate();
                     }
@@ -656,7 +796,10 @@ public class MyPanel extends JPanel {
                             Object[] obi = listyStrNaObiekty(numdata, tabele.TRANSPORT);
                             for (int i = 0; i < obi.length; i++) {
                                 Transport.listaTransportow.set(i, (Transport) obi[i]);
+                                // System.out.println(((Transport) obi[i]).toString());
                             }
+
+                            ZapiszPlik(pliki.LISTA_TRANSPORTOW);
                         }
                         revalidate();
                     }
@@ -857,6 +1000,8 @@ public class MyPanel extends JPanel {
 
                                         btn_loginZatw.setText("Zaloguj"); // Zaloguj/Zatwierdź
                                         btn_rejCof.setText("Rejestracja"); // Rejestracja/Cofnij
+
+                                        ZapiszPlik(pliki.DANE_LOGOWANIA);
                                     } else if (pusto) {
                                         lbl_logRej.setForeground(new Color(204, 0, 0));
                                         lbl_logRej.setText("Login lub hasło jest puste");
@@ -1006,6 +1151,10 @@ public class MyPanel extends JPanel {
                                         txt_okPracNazw.getText(), txt_okPracPoz.getText(), txt_okPracWypl.getText());
 
                                 fr_dodajPrac.setVisible(false);
+                                fr_main.getContentPane().removeAll();
+                                fr_main.getContentPane().add(new MyPanel(panele.PRACOWNICY));
+
+                                ZapiszPlik(pliki.LISTA_PRACOWNIKOW);
 
                             } catch (Throwable thr) {
                                 System.out.println("\n*** Error!\n\tNie udało się stworzyć nowego pracownika!\n");
@@ -1071,6 +1220,30 @@ public class MyPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent event) {
                         if (event.getSource() == btn_okPracUs) {
+                            try {
+                                IDprac = Integer.valueOf(txt_okPracUsID.getText());
+                            } catch (Throwable thr) {
+                                System.out.println("Nie można zparsować txt_okPracUsID.getText()");
+                                return;
+                            }
+
+                            Pracownik sprawdzany = Pracownik.znajdzPoID(IDprac, true);
+
+                            if (sprawdzany == null) {
+                                lbl_okPracUsIm.setText(defaultPracUsLbl[0] + "Nie ma takiego pracownika");
+                                lbl_okPracUsNazw.setText(defaultPracUsLbl[1] + "Nie ma takiego pracownika");
+                                lbl_okPracUsPoz.setText(defaultPracUsLbl[2] + "Nie ma takiego pracownika");
+                                lbl_okPracUsZm.setText(defaultPracUsLbl[3] + "Nie ma takiego pracownika");
+                                return;
+                            }
+
+                            Pracownik.listaPracownikow.remove(sprawdzany);
+
+                            fr_main.getContentPane().removeAll();
+                            fr_main.getContentPane().add(new MyPanel(panele.PRACOWNICY));
+                            fr_dodajPrac.setVisible(false);
+
+                            ZapiszPlik(pliki.LISTA_PRACOWNIKOW);
                         }
                         if (event.getSource() == btn_okPracUsSpr) {
                             try {
@@ -1165,12 +1338,12 @@ public class MyPanel extends JPanel {
                             try {
                                 Towar.listaTowarow.sort(Towar.porownajID);
 
-                                int ID = 1, ileTow = Towar.listaTowarow.size();
+                                int ID = 0, ileTow = Towar.listaTowarow.size();
 
                                 if (ileTow > 0)
                                     ID = Towar.listaTowarow.get(ileTow - 1).ID;
                                 if (ID < 0) {
-                                    ID = 1;
+                                    ID = 0;
                                 }
 
                                 ID++;
@@ -1202,6 +1375,9 @@ public class MyPanel extends JPanel {
                                 Towar.listaTowarow.set(ileTow, nowy);
 
                                 fr_dodajImport.setVisible(false);
+
+                                ZapiszPlik(pliki.LISTA_TOWAROW);
+                                ZapiszPlik(pliki.LISTA_TRANSPORTOW);
 
                             } catch (Throwable thr) {
                                 System.out.println(
@@ -1272,16 +1448,66 @@ public class MyPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent event) {
                         if (event.getSource() == btn_okEkspDodaj) {
-                        }
-                        if (event.getSource() == btn_okEkspSpr) {
+                            int IDEksp = 0;
+
                             try {
-                                IDprac = Integer.valueOf(txt_okEkspID.getText());
+                                IDEksp = Integer.valueOf(txt_okEkspID.getText());
                             } catch (Throwable thr) {
                                 System.out.println("Nie można zparsować txt_okEkspID.getText()");
                                 return;
                             }
 
-                            Towar sprawdzany = Towar.znajdzPoID(IDprac, true);
+                            Towar sprawdzany = Towar.znajdzPoID(IDEksp, true);
+
+                            if (sprawdzany == null) {
+                                lbl_okEkspNazwa.setText(defaultEkspLbl[0] + "Nie ma takiego towaru");
+                                lbl_okEkspWlasc.setText(defaultEkspLbl[1] + "Nie ma takiego towaru");
+                                lbl_okEkspTyp.setText(defaultEkspLbl[2] + "Nie ma takiego towaru");
+                                lbl_okEkspWaga.setText(defaultEkspLbl[3] + "Nie ma takiego towaru");
+                                return;
+                            }
+
+                            String dataIczas[];
+
+                            if (txt_okEkspData.getText().contains(","))
+                                dataIczas = txt_okEkspData.getText().replace(" ", "").split(",");
+                            else
+                                dataIczas = txt_okEkspData.getText().split(" ");
+
+                            String dmy[] = dataIczas[0].split("\\.");
+                            String hm[] = dataIczas[1].split(":");
+
+                            try {
+                                new Transport(IDEksp, sprawdzany.nazwa,
+                                        Integer.parseInt(dmy[2]), Integer.parseInt(dmy[1]), Integer.parseInt(dmy[0]),
+                                        Integer.parseInt(hm[0]), Integer.parseInt(hm[1]),
+                                        Transport.stanyTransportu.EKSPORT);
+                            } catch (Throwable t) {
+                                System.out.println("*** Error!\n" + t.getMessage());
+                                lbl_okEkspNazwa.setText("Nie można dodac towaru");
+                                lbl_okEkspWlasc.setText("Nie można dodac towaru");
+                                lbl_okEkspTyp.setText("Nie można dodac towaru");
+                                lbl_okEkspWaga.setText("Nie można dodac towaru");
+                                return;
+                            }
+
+                            fr_main.getContentPane().removeAll();
+                            fr_main.getContentPane().add(new MyPanel(panele.TRANSPORT));
+                            fr_dodajEksport.setVisible(false);
+
+                            ZapiszPlik(pliki.LISTA_TRANSPORTOW);
+                        }
+                        if (event.getSource() == btn_okEkspSpr) {
+                            int IDEksp = 0;
+
+                            try {
+                                IDEksp = Integer.valueOf(txt_okEkspID.getText());
+                            } catch (Throwable thr) {
+                                System.out.println("Nie można zparsować txt_okEkspID.getText()");
+                                return;
+                            }
+
+                            Towar sprawdzany = Towar.znajdzPoID(IDEksp, true);
 
                             if (sprawdzany == null) {
                                 lbl_okEkspNazwa.setText(defaultEkspLbl[0] + "Nie ma takiego towaru");
@@ -1353,6 +1579,16 @@ public class MyPanel extends JPanel {
         new Transport(3, "Miedź", 2003, 10, 1, 7, 6, Transport.stanyTransportu.IMPORT);
         new Transport(4, "Karton-gips", 2023, 11, 18, 17, 15, Transport.stanyTransportu.IMPORT);
         new Transport(4, "Karton-gips", 2024, 11, 18, 17, 15, Transport.stanyTransportu.EKSPORT);
+
+        // ZapiszPlik(pliki.LISTA_PRACOWNIKOW);
+        // ZapiszPlik(pliki.LISTA_TOWAROW);
+        // ZapiszPlik(pliki.LISTA_TRANSPORTOW);
+        // ZapiszPlik(pliki.DANE_LOGOWANIA);
+
+        WczytajPlik(pliki.LISTA_PRACOWNIKOW);
+        WczytajPlik(pliki.LISTA_TOWAROW);
+        WczytajPlik(pliki.LISTA_TRANSPORTOW);
+        WczytajPlik(pliki.DANE_LOGOWANIA);
 
         // Towar wMag[] = Towar.zwrocMagazyn();
         for (int i = 0; i < Towar.listaTowarow.size(); i++) {

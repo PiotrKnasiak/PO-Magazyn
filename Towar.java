@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Locale;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.io.Serializable;
 
-public class Towar implements Comparable<Towar> {
+public class Towar implements Comparable<Towar>, Serializable {
     public static enum stanyTowaru {
         DO_ODBIORU,
         W_MAGAZYNIE,
@@ -137,6 +138,7 @@ public class Towar implements Comparable<Towar> {
         return kolator.compare(this.nazwa, t.nazwa);
     }
 
+    // #region Konparatory
     static Comparator<Towar> porownajNaz = new Comparator<Towar>() {
         @Override
         public int compare(Towar t1, Towar t2) {
@@ -179,6 +181,7 @@ public class Towar implements Comparable<Towar> {
             return porownajNaz.compare(t1, t2);
         }
     };
+    // #endregion
 
     @Override
     public String toString() {

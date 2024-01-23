@@ -14,8 +14,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
+import java.io.Serializable;
 
-public class Transport implements Comparable<Transport> {
+public class Transport implements Comparable<Transport>, Serializable {
    public static enum stanyTransportu {
       IMPORT,
       EKSPORT
@@ -29,8 +30,9 @@ public class Transport implements Comparable<Transport> {
 
    public static stanyTransportu stringNaStany(String str) {
       str = str.toLowerCase().replace(" ", "").replace("ó", "o");
+      System.out.println("string stanu to: " + str);
 
-      if (str == "przywozdomagazynu" || str == "import")
+      if (str.compareTo("przywozdomagazynu") == 0 || str.compareTo("import") == 0)
          return stanyTransportu.IMPORT;
       return stanyTransportu.EKSPORT;
    }
@@ -152,8 +154,11 @@ public class Transport implements Comparable<Transport> {
          Towar.stanyTowaru stanI = stanTowaruTeraz(imp);
 
          /*
-          * System.out.println("data stanI to" + dataTransNaString(imp.dataTransportu));
-          * System.out.println("data stanE to" + dataTransNaString(eksp.dataTransportu));
+          * System.out.println("data stanI towaru o ID " + ID + " to " +
+          * dataTransNaString(imp.dataTransportu));
+          * System.out.println("data stanE towaru o ID " + ID + " to " +
+          * dataTransNaString(eksp.dataTransportu));
+          * 
           * if (stanI == Towar.stanyTowaru.DO_ODBIORU)
           * System.out.print("stanI to: DO_ODBIORU, ");
           * else if (stanI == Towar.stanyTowaru.BLAD)
@@ -181,6 +186,26 @@ public class Transport implements Comparable<Transport> {
       }
 
       return Towar.stanyTowaru.W_MAGAZYNIE;
+   }
+
+   public static Transport znajdzPoID(int ID, boolean alert) {
+      Transport sprawdzany = null;
+
+      for (int i = 0; i < Transport.listaTransportow.size(); i++) {
+         if (Transport.listaTransportow.get(i).ID == ID) {
+            return Transport.listaTransportow.get(i);
+         }
+      }
+
+      if (sprawdzany == null) {
+         if (alert) {
+            System.out.println(
+                  "\n*** Error!\n\tNiepowodzenie w Transport.znajdzPoID(" + ID
+                        + ", true)!\n\t  Nie ma takiego pracownika");
+         }
+      }
+
+      return sprawdzany;
    }
 
    public Transport() {
@@ -228,6 +253,7 @@ public class Transport implements Comparable<Transport> {
       return kolator.compare(this.ID, t.ID);
    }
 
+   // #region Konparatory
    static Comparator<Transport> porownajID = new Comparator<Transport>() {
       @Override
       public int compare(Transport t1, Transport t2) {
@@ -244,6 +270,13 @@ public class Transport implements Comparable<Transport> {
          return kolator.compare(dataTransNaString(t1.dataTransportu), dataTransNaString(t2.dataTransportu));
       }
    };
+   // #endregion
+
+   @Override
+   public String toString() {
+      return "\n   ID:" + this.ID + "\n\tNazwa: " + this.nazwaTowaru + "\n\tData: "
+            + dataTransNaString(this.dataTransportu) + "\n\tTyp transportu: " + stanyNaString(this.import_eksport);
+   }
 
    // testy
    public static void main(String[] args) {

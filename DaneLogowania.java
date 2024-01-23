@@ -2,8 +2,9 @@ package ProjektMagazyn;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.io.Serializable;
 
-public class DaneLogowania implements Comparable<DaneLogowania> {
+public class DaneLogowania implements Comparable<DaneLogowania>, Serializable {
    public DaneLogowania() {
       this.ID = -2;
 
@@ -28,7 +29,7 @@ public class DaneLogowania implements Comparable<DaneLogowania> {
    String login = "test";
    String haslo = "Test";
 
-   private static ArrayList<DaneLogowania> listaDanychLog = new ArrayList<>();
+   public static ArrayList<DaneLogowania> listaDanychLog = new ArrayList<>();
 
    public static int sprawdzLogwanie(String login, String haslo) {
       for (int i = 0; i < listaDanychLog.size(); i++) {

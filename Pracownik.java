@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.io.Serializable;
 
-//import Testy.Ksiazka;
-
-public class Pracownik extends Osoba implements Comparable<Pracownik> {
+public class Pracownik extends Osoba implements Comparable<Pracownik>, Serializable {
 
     Pracownik() {
         listaPracownikow.add(this);
@@ -37,6 +36,7 @@ public class Pracownik extends Osoba implements Comparable<Pracownik> {
         // dodanie instancji obiektu do statycznej listy
     }
 
+    String imie, nazwisko;
     int ID = 0;
     String zmiana = "Dzienna";
     String pozycja = "niewolnik (praktykant)";
@@ -122,6 +122,7 @@ public class Pracownik extends Osoba implements Comparable<Pracownik> {
 
     static Collator kolator = Collator.getInstance(new Locale("pl"));
 
+    // #region Konparatory
     static Comparator<Pracownik> porownajImie = new Comparator<Pracownik>() {
         @Override
         public int compare(Pracownik p1, Pracownik p2) {
@@ -144,6 +145,7 @@ public class Pracownik extends Osoba implements Comparable<Pracownik> {
         }
     };
 
+    // #endregion
     @Override
     public int compareTo(Pracownik p) {
         int x = kolator.compare(this.nazwisko, p.nazwisko);
