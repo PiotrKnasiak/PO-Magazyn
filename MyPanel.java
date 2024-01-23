@@ -1574,10 +1574,10 @@ public class MyPanel extends JPanel {
         new Transport(4, "Karton-gips", 2023, 11, 18, 17, 15, Transport.stanyTransportu.IMPORT);
         new Transport(4, "Karton-gips", 2024, 11, 18, 17, 15, Transport.stanyTransportu.EKSPORT);
 
-        // ZapiszPlik(pliki.LISTA_PRACOWNIKOW);
-        // ZapiszPlik(pliki.LISTA_TOWAROW);
-        // ZapiszPlik(pliki.LISTA_TRANSPORTOW);
-        // ZapiszPlik(pliki.DANE_LOGOWANIA);
+        ZapiszPlik(pliki.LISTA_PRACOWNIKOW);
+        ZapiszPlik(pliki.LISTA_TOWAROW);
+        ZapiszPlik(pliki.LISTA_TRANSPORTOW);
+        ZapiszPlik(pliki.DANE_LOGOWANIA);
 
         WczytajPlik(pliki.LISTA_PRACOWNIKOW);
         WczytajPlik(pliki.LISTA_TOWAROW);
