@@ -169,7 +169,7 @@ public class MyPanel extends JPanel {
     private Font czcionka = new Font("Dialog", Font.PLAIN, 18);
     private Font czcionkaB = new Font("Dialog", Font.BOLD, 14);
 
-    private static boolean zalogowany = true;
+    private static boolean zalogowany = false;
     static int licznik = 0;
     private static String sortTow = "ID"; // ID, Wlasc, Waga
     private static etapyLogowania etapLog = etapyLogowania.LOGOWANIE;
@@ -178,6 +178,16 @@ public class MyPanel extends JPanel {
     // #endregion
 
     // #region Przetwarzanie danych i tabele
+
+    public static boolean tryParseInt(String value) {
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     public static String[][] obiektyNaListyStr(Object[] obiekty, tabele typ) {
         // {"ID", "Nazwisko", "Imie", "Zmiana", "Pozycja", "Wypłata"};
         // {"ID", "Nazwa", "Typ produktu", "Waga [kg]", "Właściciel"};
@@ -256,6 +266,11 @@ public class MyPanel extends JPanel {
                 // String pozycja, String wypłata, boolean prank
                 for (int i = 0; i < obiekty.length; i++) {
                     int ID = Integer.valueOf(str[i][0]);
+
+                    if (!tryParseInt(str[i][5])) {
+                        str[i][5] = "Error!";
+                    }
+
                     Pracownik pracownik = new Pracownik(ID, str[i][3],
                             str[i][2], str[i][1], str[i][4], str[i][5], false);
 
@@ -292,6 +307,7 @@ public class MyPanel extends JPanel {
 
                     String dmy[] = dataIczas[0].split("\\.");
                     String hm[] = dataIczas[1].split(":");
+
                     Transport transport = new Transport(ID, str[i][1], Integer.parseInt(dmy[2]),
                             Integer.parseInt(dmy[1]), Integer.parseInt(dmy[0]), Integer.parseInt(hm[0]),
                             Integer.parseInt(hm[1]), Transport.stringNaStany(str[i][3]), false);
@@ -521,6 +537,7 @@ public class MyPanel extends JPanel {
         }
         return false;
     }
+
     // #endregion
 
     public MyPanel(panele panel) {
@@ -648,6 +665,8 @@ public class MyPanel extends JPanel {
 
                             ZapiszPlik(pliki.LISTA_PRACOWNIKOW);
 
+                            fr_main.getContentPane().removeAll();
+                            fr_main.getContentPane().add(new MyPanel(panel));
                         }
                     }
                 };
@@ -881,6 +900,9 @@ public class MyPanel extends JPanel {
 
                                         txt_login.setText("");
                                         txt_haslo.setText("");
+
+                                        fr_main.getContentPane().removeAll();
+                                        fr_main.getContentPane().add(new MyPanel(panele.PRACOWNICY));
                                     } else {
                                         lbl_logRej.setForeground(new Color(204, 0, 0));
                                         lbl_logRej.setText("Błędny login lub hasło");
@@ -1327,6 +1349,9 @@ public class MyPanel extends JPanel {
                 ActionListener listenSubDodajTow = new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
+
+                        String dataIczas[], dmy[] = new String[0], hm[] = new String[0];
+
                         if (event.getSource() == btn_okImpDodaj) {
 
                             try {
@@ -1342,19 +1367,38 @@ public class MyPanel extends JPanel {
 
                                 ID++;
 
+                                if (!tryParseInt(txt_okImpWaga.getText())) {
+                                    throw new Exception();
+                                }
+
                                 Towar nowy = new Towar(ID, txt_okImpNazw.getText(), txt_okImpTyp.getText(),
                                         Integer.valueOf(txt_okImpWaga.getText()), txt_okImpWlasc.getText(),
                                         Towar.stanyTowaru.DO_ODBIORU);
-
-                                String dataIczas[];
 
                                 if (txt_okImpData.getText().contains(","))
                                     dataIczas = txt_okImpData.getText().replace(" ", "").split(",");
                                 else
                                     dataIczas = txt_okImpData.getText().split(" ");
 
-                                String dmy[] = dataIczas[0].split("\\.");
-                                String hm[] = dataIczas[1].split(":");
+                                dmy = dataIczas[0].split("\\.");
+                                hm = dataIczas[1].split(":");
+
+                                if (dmy.length != 3 || hm.length != 2)
+                                    throw new Exception();
+
+                                for (String s : dmy) {
+                                    if (!tryParseInt(s)) {
+                                        txt_okImpData.setText("Niepoprawny czas!");
+                                        throw new Exception();
+                                    }
+                                }
+
+                                for (String s : hm) {
+                                    if (!tryParseInt(s)) {
+                                        txt_okImpData.setText("Niepoprawny czas!");
+                                        throw new Exception();
+                                    }
+                                }
 
                                 new Transport(ID, txt_okImpNazw.getText(),
                                         Integer.parseInt(dmy[2]), Integer.parseInt(dmy[1]), Integer.parseInt(dmy[0]),
@@ -1374,6 +1418,14 @@ public class MyPanel extends JPanel {
                                 ZapiszPlik(pliki.LISTA_TRANSPORTOW);
 
                             } catch (Throwable thr) {
+
+                                if (dmy.length != 3 || hm.length != 2)
+                                    txt_okImpData.setText("Niepoprawny czas!");
+
+                                if (!tryParseInt(txt_okImpWaga.getText())) {
+                                    txt_okImpWaga.setText("Niepoprawna waga!");
+                                }
+
                                 System.out.println(
                                         "\n*** Error!\n\tNie udało się stworzyć nowego Towaru i Transportu!\n" +
                                                 thr.getMessage());
@@ -1461,27 +1513,48 @@ public class MyPanel extends JPanel {
                                 return;
                             }
 
-                            String dataIczas[];
+                            String dataIczas[], dmy[] = new String[0], hm[] = new String[0];
 
                             if (txt_okEkspData.getText().contains(","))
                                 dataIczas = txt_okEkspData.getText().replace(" ", "").split(",");
                             else
                                 dataIczas = txt_okEkspData.getText().split(" ");
 
-                            String dmy[] = dataIczas[0].split("\\.");
-                            String hm[] = dataIczas[1].split(":");
-
                             try {
+                                dmy = dataIczas[0].split("\\.");
+                                hm = dataIczas[1].split(":");
+
+                                if (dmy.length != 3 || hm.length != 2)
+                                    throw new Exception();
+
+                                for (String s : dmy) {
+                                    if (!tryParseInt(s)) {
+                                        txt_okEkspData.setText("Niepoprawny czas!");
+                                        throw new Exception();
+                                    }
+                                }
+
+                                for (String s : hm) {
+                                    if (!tryParseInt(s)) {
+                                        txt_okEkspData.setText("Niepoprawny czas!");
+                                        throw new Exception();
+                                    }
+                                }
+
                                 new Transport(IDEksp, sprawdzany.nazwa,
                                         Integer.parseInt(dmy[2]), Integer.parseInt(dmy[1]), Integer.parseInt(dmy[0]),
                                         Integer.parseInt(hm[0]), Integer.parseInt(hm[1]),
                                         Transport.stanyTransportu.EKSPORT);
                             } catch (Throwable t) {
+
+                                if (dmy.length != 3 || hm.length != 2)
+                                    txt_okEkspData.setText("Niepoprawny czas!");
+
                                 System.out.println("*** Error!\n" + t.getMessage());
-                                lbl_okEkspNazwa.setText("Nie można dodac towaru");
-                                lbl_okEkspWlasc.setText("Nie można dodac towaru");
-                                lbl_okEkspTyp.setText("Nie można dodac towaru");
-                                lbl_okEkspWaga.setText("Nie można dodac towaru");
+                                lbl_okEkspNazwa.setText(defaultEkspLbl[0] + "Nie można dodac towaru");
+                                lbl_okEkspWlasc.setText(defaultEkspLbl[1] + "Nie można dodac towaru");
+                                lbl_okEkspTyp.setText(defaultEkspLbl[2] + "Nie można dodac towaru");
+                                lbl_okEkspWaga.setText(defaultEkspLbl[3] + "Nie można dodac towaru");
                                 return;
                             }
 
